@@ -1,5 +1,7 @@
-package plume;
+package org.plumelib.icalavailable;
 
+import org.plumelib.options.Option;
+import org.plumelib.options.Options;
 import java.io.InputStream;
 import java.net.URL;
 import java.text.DateFormat;
