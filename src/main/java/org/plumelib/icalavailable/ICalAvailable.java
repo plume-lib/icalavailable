@@ -1,7 +1,5 @@
 package org.plumelib.icalavailable;
 
-import org.plumelib.options.Option;
-import org.plumelib.options.Options;
 import java.io.InputStream;
 import java.net.URL;
 import java.text.DateFormat;
@@ -34,16 +32,14 @@ import net.fortuna.ical4j.model.component.VFreeBusy;
 import net.fortuna.ical4j.model.parameter.FbType;
 import net.fortuna.ical4j.model.property.DtStart;
 import net.fortuna.ical4j.model.property.FreeBusy;
+import org.plumelib.options.Option;
+import org.plumelib.options.Options;
 
 /*>>>
 import org.checkerframework.checker.nullness.qual.*;
 import org.checkerframework.checker.regex.qual.*;
 import org.checkerframework.dataflow.qual.Pure;
 */
-
-// If you are perplexed because of odd results, maybe it is because of the
-// transparency of your iCal items (this shows up as "available/busy" in
-// Google calendar).
 
 // TODO:  Fix "Problem:  any all-day events will be treated as UTC." (see below)
 
@@ -73,6 +69,8 @@ import org.checkerframework.dataflow.qual.Pure;
  *
  * <code>[+]</code> marked option can be specified multiple times
  * <!-- end options doc -->
+ * If you are perplexed because of odd results, maybe it is because of the transparency of your iCal
+ * items (this shows up as "available/busy" in Google calendar).
  */
 public final class ICalAvailable {
 
@@ -114,6 +112,7 @@ public final class ICalAvailable {
   }
 
   static TimeZoneRegistry tzRegistry = TimeZoneRegistryFactory.getInstance().createRegistry();
+
   /**
    * Time zone as an Olson timezone ID, e.g.: America/New_York. Available times are printed in this
    * time zone. It defaults to the system time zone.
@@ -121,11 +120,14 @@ public final class ICalAvailable {
   // don't need "e.g.: America/New_York" in message:  the default is an example
   @Option(value = "<timezone> time zone, e.g.: America/New_York", noDocDefault = true)
   public static String timezone1 = TimeZone.getDefault().getID();
+
   // Either of these initializations causes a NullPointerException
   // at net.fortuna.ical4j.model.TimeZone.<init>(TimeZone.java:67)
   // static TimeZone tz1 = new TimeZone(new VTimeZone());
   // static TimeZone tz1 = tzRegistry.getTimeZone(canonicalizeTimezone(timezone1));
+  /** The TimeZone represented by string {@link #timezone1}. */
   static /*@MonotonicNonNull*/ TimeZone tz1;
+
   // If I'm outputting in a different timezone, then my notion of a "day"
   // may be different than the other timezone's notion of a "day".  This
   // doesn't seem important enough to fix right now.
@@ -136,6 +138,7 @@ public final class ICalAvailable {
   @Option("<timezone> optional second time zone, e.g.: America/New_York")
   public static /*@Nullable*/ String timezone2;
 
+  /** The TimeZone represented by string {@link #timezone2}. */
   static /*@Nullable*/ TimeZone tz2;
 
   /// Other variables
@@ -148,11 +151,14 @@ public final class ICalAvailable {
 
   static DateFormat tf = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.US);
   static DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US);
-  static DateFormat dffull = DateFormat.getDateInstance(DateFormat.FULL, Locale.US);
+  static DateFormat dfDayOfWeek = new SimpleDateFormat("EEE");
 
   /// Procedures
 
-  @SuppressWarnings("deprecation") // for iCal4j's use of Date.{get,set}Minutes
+  @SuppressWarnings({
+    "deprecation", // for iCal4j's use of Date.{get,set}Minutes
+    "StringSplitter" // don't add dependence on Guava
+  })
   /*@EnsuresNonNull("tz1")*/
   static void processOptions(String[] args) {
     Options options = new Options("ICalAvailable [options]", ICalAvailable.class);
@@ -168,15 +174,16 @@ public final class ICalAvailable {
 
     // Convert Strings to TimeZones
     tz1 = tzRegistry.getTimeZone(canonicalizeTimezone(timezone1));
-    assert tz1 != null;
     if (tz1 == null) {
-      throw new Error("didn't find timezone " + timezone1);
+      System.err.println(
+          "Unrecognized time zone (see http://php.net/manual/en/timezones.php): " + timezone1);
+      System.exit(1);
     }
     if (timezone2 != null) {
       tz2 = tzRegistry.getTimeZone(canonicalizeTimezone(timezone2));
       if (tz2 == null) {
         System.err.println(
-            "Unrecognized time zone (see http://php.net/manual/en/timezones.php ): " + timezone2);
+            "Unrecognized time zone (see http://php.net/manual/en/timezones.php): " + timezone2);
         System.exit(1);
       }
     }
@@ -293,7 +300,7 @@ public final class ICalAvailable {
   static /*@Regex(4)*/ Pattern timeRegexp =
       Pattern.compile("([0-2]?[0-9])(:([0-5][0-9]))?([aApP][mM])?");
 
-  // Parse a time like "9:30pm"
+  /** Parse a time like "9:30pm". */
   @SuppressWarnings("deprecation") // for iCal4j
   /*@RequiresNonNull("tz1")*/
   static DateTime parseTime(String time) {
@@ -339,14 +346,20 @@ public final class ICalAvailable {
     System.out.println("iCal_URL: " + iCal_URL);
   }
 
+  /**
+   * Main entry point; see class documentation.
+   *
+   * @param args command-line arguments; see class documentation
+   */
   public static void main(String[] args) {
 
     processOptions(args);
 
-    List<Period> available = new ArrayList<Period>();
     if (debug) {
       System.err.printf("Testing %d days%n", days);
     }
+
+    List<Period> available = new ArrayList<Period>();
     for (int i = 0; i < days; i++) {
       available.addAll(oneDayAvailable(start_date, calendars));
       start_date = new DateTime(start_date.getTime() + 1000 * 60 * 60 * 24);
@@ -390,8 +403,8 @@ public final class ICalAvailable {
   static String periodListString(PeriodList pl, TimeZone tz) {
     tf.setTimeZone(tz);
     StringBuilder result = new StringBuilder();
-    // "Object" because PeriodList extends TreeSet, but it really ought to
-    // extend TreeSet</*@NonNull*/ Period>
+    // "Object" because PeriodList extends raw TreeSet, but it really ought to
+    // extend TreeSet<@NonNull Period>
     for (Object p : pl) {
       assert p != null
           : "@AssumeAssertion(nullness): non-generic container class; elements are non-null";
@@ -525,10 +538,8 @@ public final class ICalAvailable {
     df.setTimeZone(tz);
     String result = df.format(d);
     // Don't remove trailing year; it's a good double-check.
-    // Remove trailing year, such as ", 1952".
-    // result = result.substring(0, result.length() - 6);
     // Prepend day of week.
-    result = dffull.format(d).substring(0, 3) + " " + result;
+    result = dfDayOfWeek.format(d) + " " + result;
     return result;
   }
 }
