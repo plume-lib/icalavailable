@@ -311,7 +311,7 @@ public final class ICalAvailable {
       System.exit(1);
     }
     @SuppressWarnings(
-        "nullness") // Regex Checker imprecision:  matches() guarantees that group 1 exists in regexp
+        "nullness") // Regex Checker imprecision:  matches() guarantees group 1 exists in regexp
     /*@NonNull*/ String hourString = m.group(1);
     String minuteString = m.group(3);
     String ampmString = m.group(4);
