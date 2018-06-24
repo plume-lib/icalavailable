@@ -28,6 +28,5 @@ dependencies {
 
 // Turn Javadoc warnings into errors.
 javadoc {
-  options.addStringOption('Xmaxwarns', '10000')
   options.addStringOption('Xwerror', '-quiet')
 }
