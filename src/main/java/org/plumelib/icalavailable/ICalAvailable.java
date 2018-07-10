@@ -300,7 +300,12 @@ public final class ICalAvailable {
   static /*@Regex(4)*/ Pattern timeRegexp =
       Pattern.compile("([0-2]?[0-9])(:([0-5][0-9]))?([aApP][mM])?");
 
-  /** Parse a time like "9:30pm". */
+  /**
+   * Parse a time like "9:30pm".
+   *
+   * @param time the string to parse as a time
+   * @return the time represented by {@code time}
+   */
   @SuppressWarnings("deprecation") // for iCal4j
   /*@RequiresNonNull("tz1")*/
   static DateTime parseTime(String time) {
@@ -417,6 +422,8 @@ public final class ICalAvailable {
    * Creates a new DateTime with date taken from the first argument and time taken from the second
    * argument.
    *
+   * @param date supplies the date for the result
+   * @param time supplies the time for the result
    * @return the merged DateTime
    */
   @SuppressWarnings("deprecation") // for iCal4j
@@ -513,7 +520,10 @@ public final class ICalAvailable {
   /**
    * Parses a date when formatted in several common formats.
    *
+   * @param strDate the string to parse as a date
    * @return a Date read from the given string
+   * @throws ParseException when the argument does not represent a date, in one of the supported
+   *     formats
    * @see dateFormats
    */
   static java.util.Date parseDate(String strDate) throws ParseException {

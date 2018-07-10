@@ -28,5 +28,6 @@ dependencies {
 
 // Turn Javadoc warnings into errors.
 javadoc {
-  options.addStringOption('Xwerror', '-quiet')
+  options.addStringOption('Xwerror', '-Xdoclint:all')
+  options.addStringOption('private', '-quiet')
 }
