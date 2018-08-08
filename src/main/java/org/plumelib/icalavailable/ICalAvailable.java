@@ -32,14 +32,15 @@ import net.fortuna.ical4j.model.component.VFreeBusy;
 import net.fortuna.ical4j.model.parameter.FbType;
 import net.fortuna.ical4j.model.property.DtStart;
 import net.fortuna.ical4j.model.property.FreeBusy;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
+import org.checkerframework.checker.regex.qual.Regex;
+import org.checkerframework.dataflow.qual.Pure;
 import org.plumelib.options.Option;
 import org.plumelib.options.Options;
-
-/*>>>
-import org.checkerframework.checker.nullness.qual.*;
-import org.checkerframework.checker.regex.qual.*;
-import org.checkerframework.dataflow.qual.Pure;
-*/
 
 // TODO:  Fix "Problem:  any all-day events will be treated as UTC." (see below)
 
@@ -126,7 +127,7 @@ public final class ICalAvailable {
   // static TimeZone tz1 = new TimeZone(new VTimeZone());
   // static TimeZone tz1 = tzRegistry.getTimeZone(canonicalizeTimezone(timezone1));
   /** The TimeZone represented by string {@link #timezone1}. */
-  static /*@MonotonicNonNull*/ TimeZone tz1;
+  static @MonotonicNonNull TimeZone tz1;
 
   // If I'm outputting in a different timezone, then my notion of a "day"
   // may be different than the other timezone's notion of a "day".  This
@@ -136,10 +137,10 @@ public final class ICalAvailable {
    * in two time zones.
    */
   @Option("<timezone> optional second time zone, e.g.: America/New_York")
-  public static /*@Nullable*/ String timezone2;
+  public static @Nullable String timezone2;
 
   /** The TimeZone represented by string {@link #timezone2}. */
-  static /*@Nullable*/ TimeZone tz2;
+  static @Nullable TimeZone tz2;
 
   /// Other variables
 
@@ -159,10 +160,10 @@ public final class ICalAvailable {
     "deprecation", // for iCal4j's use of Date.{get,set}Minutes
     "StringSplitter" // don't add dependence on Guava
   })
-  /*@EnsuresNonNull("tz1")*/
+  @EnsuresNonNull("tz1")
   static void processOptions(String[] args) {
     Options options = new Options("ICalAvailable [options]", ICalAvailable.class);
-    String[] remaining_args = options.parse_or_usage(args);
+    String[] remaining_args = options.parse(true, args);
     if (remaining_args.length != 0) {
       System.err.println("Unrecognized arguments: " + Arrays.toString(remaining_args));
       System.exit(1);
@@ -290,14 +291,14 @@ public final class ICalAvailable {
     return (result == null) ? timezone : result;
   }
 
-  /*@Pure*/
+  @Pure
   static String printedTimezone(TimeZone tz) {
     String tzString = tz.getDisplayName();
     String result = printedTimezones.get(tzString);
     return (result == null) ? tzString : result;
   }
 
-  static /*@Regex(4)*/ Pattern timeRegexp =
+  static @Regex(4) Pattern timeRegexp =
       Pattern.compile("([0-2]?[0-9])(:([0-5][0-9]))?([aApP][mM])?");
 
   /**
@@ -307,7 +308,7 @@ public final class ICalAvailable {
    * @return the time represented by {@code time}
    */
   @SuppressWarnings("deprecation") // for iCal4j
-  /*@RequiresNonNull("tz1")*/
+  @RequiresNonNull("tz1")
   static DateTime parseTime(String time) {
 
     Matcher m = timeRegexp.matcher(time);
@@ -317,7 +318,7 @@ public final class ICalAvailable {
     }
     @SuppressWarnings(
         "nullness") // Regex Checker imprecision:  matches() guarantees group 1 exists in regexp
-    /*@NonNull*/ String hourString = m.group(1);
+    @NonNull String hourString = m.group(1);
     String minuteString = m.group(3);
     String ampmString = m.group(4);
 
@@ -443,7 +444,7 @@ public final class ICalAvailable {
 
   // Process day-by-day because otherwise weekends and evenings are included.
   @SuppressWarnings("unchecked") // for iCal4j
-  /*@RequiresNonNull("tz1")*/
+  @RequiresNonNull("tz1")
   static List<Period> oneDayAvailable(DateTime day, List<Calendar> calendars) {
     if (debug) {
       System.err.printf("oneDayAvailable(%s, ...)%n", day);
@@ -470,7 +471,7 @@ public final class ICalAvailable {
       // daily events into a different format before inserting them.
       for (Calendar calendar : calendars) {
         // getComponents() returns a raw ArrayList.  Expose its element type.
-        ArrayList</*@NonNull*/ CalendarComponent> clist = calendar.getComponents();
+        ArrayList<@NonNull CalendarComponent> clist = calendar.getComponents();
         for (CalendarComponent c : clist) {
           if (c instanceof VEvent) {
             VEvent v = (VEvent) c;
