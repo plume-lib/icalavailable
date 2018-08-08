@@ -1,11 +1,16 @@
 plugins {
-  // Code formatting with Google Java Format; use targets "goJF" and "verJF".
-  id "com.github.sherter.google-java-format" version "0.7.1"
+  // Enable when google-java-format handles type annotations better;
+  // see https://github.com/google/google-java-format/issues/5
+  // // Code formatting with Google Java Format; use targets "goJF" and "verJF".
+  // id "com.github.sherter.google-java-format" version "0.7.1"
 }
 
 // Apply the java-library plugin to add support for Java Library
 apply plugin: 'java-library'
 apply plugin: 'java'
+
+// Checker Framework pluggable type-checking
+apply from: "${buildscript.sourceFile.parent}/gradle/checkerframework.gradle"
 
 // In this section you declare where to find the dependencies of your project
 repositories {
