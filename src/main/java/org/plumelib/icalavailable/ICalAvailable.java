@@ -82,11 +82,14 @@ public final class ICalAvailable {
 
   /// User options
 
+  /** First date to summarize. */
   @Option("first date to summarize")
   public static String date = "today";
 
+  /** First date to summarize, parsed. */
   public static DateTime start_date = new DateTime();
 
+  /** Number of calendar days to summarize. */
   @Option("number of calendar days to summarize")
   public static int days = 8;
 
@@ -144,6 +147,7 @@ public final class ICalAvailable {
 
   /// Other variables
 
+  /** If true, enable debugging output. */
   @Option("enable debugging output")
   public static boolean debug = false;
 
