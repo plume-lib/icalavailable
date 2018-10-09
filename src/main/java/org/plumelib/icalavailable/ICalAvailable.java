@@ -98,14 +98,14 @@ public final class ICalAvailable {
    * address".
    */
   @Option("<url> schedule in iCal format")
-  public static List<String> iCal_URL = new ArrayList<String>();
+  public static List<String> iCal_URL = new ArrayList<>();
 
   /** A list of time ranges, expressed as a String. Example: 9am-5pm,7:30pm-9:30pm */
   @Option("time ranges during which appointments are permitted")
   public static String business_hours = "9am-5pm";
 
-  static List<Period> businessHours = new ArrayList<Period>(); // initialize to 9am-5pm
-  static List<Integer> businessDays = new ArrayList<Integer>(); // initialize to Mon-Fri
+  static List<Period> businessHours = new ArrayList<>(); // initialize to 9am-5pm
+  static List<Integer> businessDays = new ArrayList<>(); // initialize to Mon-Fri
 
   static {
     businessDays.add(1);
@@ -152,7 +152,7 @@ public final class ICalAvailable {
   public static boolean debug = false;
 
   /** The appointments (the times that are unavailable for a meeting). */
-  static List<Calendar> calendars = new ArrayList<Calendar>();
+  static List<Calendar> calendars = new ArrayList<>();
 
   static DateFormat tf = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.US);
   static DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US);
@@ -261,8 +261,8 @@ public final class ICalAvailable {
     }
   }
 
-  static Map<String, String> canonicalTimezones = new HashMap<String, String>();
-  static Map<String, String> printedTimezones = new HashMap<String, String>();
+  static Map<String, String> canonicalTimezones = new HashMap<>();
+  static Map<String, String> printedTimezones = new HashMap<>();
   // Yuck, this should really be a separate configuration file.
   static {
     canonicalTimezones.put("eastern", "America/New_York");
@@ -369,7 +369,7 @@ public final class ICalAvailable {
       System.err.printf("Testing %d days%n", days);
     }
 
-    List<Period> available = new ArrayList<Period>();
+    List<Period> available = new ArrayList<>();
     for (int i = 0; i < days; i++) {
       available.addAll(oneDayAvailable(start_date, calendars));
       start_date = new DateTime(start_date.getTime() + 1000 * 60 * 60 * 24);
@@ -453,7 +453,7 @@ public final class ICalAvailable {
     if (debug) {
       System.err.printf("oneDayAvailable(%s, ...)%n", day);
     }
-    List<Period> result = new ArrayList<Period>();
+    List<Period> result = new ArrayList<>();
     @SuppressWarnings("deprecation") // for iCal4j
     int dayOfWeek = day.getDay();
     if (!businessDays.contains(dayOfWeek)) {
@@ -468,7 +468,7 @@ public final class ICalAvailable {
       if (debug) {
         System.out.println("Request = " + request);
       }
-      ComponentList<CalendarComponent> busyTimes = new ComponentList<CalendarComponent>();
+      ComponentList<CalendarComponent> busyTimes = new ComponentList<>();
       // Problem:  any all-day events will be treated as UTC.
       // Instead, they should be converted to local time (tz1).
       // But VFreeBusy does not support this, so I may need to convert
