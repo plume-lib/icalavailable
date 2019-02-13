@@ -1,3 +1,12 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
+    }
+}
+
 plugins {
   // Enable when google-java-format handles type annotations better;
   // see https://github.com/google/google-java-format/issues/5
@@ -9,6 +18,8 @@ plugins {
 apply plugin: 'java-library'
 apply plugin: 'java'
 
+apply plugin: 'com.github.johnrengelman.shadow'
+
 // Checker Framework pluggable type-checking
 apply from: "${buildscript.sourceFile.parent}/gradle/checkerframework.gradle"
 
@@ -17,7 +28,7 @@ repositories {
     // Use jcenter for resolving your dependencies.
     // You can declare any Maven/Ivy/file repository here.
     mavenCentral()
-    // jcenter()
+    jcenter()
 }
 
 dependencies {
