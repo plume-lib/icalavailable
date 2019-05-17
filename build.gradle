@@ -8,6 +8,9 @@ buildscript {
 }
 
 plugins {
+  // Checker Framework pluggable type-checking
+  id 'org.checkerframework' version '0.3.0'
+
   // Enable when google-java-format handles type annotations better;
   // see https://github.com/google/google-java-format/issues/5
   // // Code formatting with Google Java Format; use targets "goJF" and "verJF".
@@ -21,7 +24,22 @@ apply plugin: 'java'
 apply plugin: 'com.github.johnrengelman.shadow'
 
 // Checker Framework pluggable type-checking
-apply from: "${buildscript.sourceFile.parent}/gradle/checkerframework.gradle"
+apply plugin: 'org.checkerframework'
+checkerFramework {
+  checkers = [
+    'org.checkerframework.checker.formatter.FormatterChecker',
+    'org.checkerframework.checker.index.IndexChecker',
+    'org.checkerframework.checker.interning.InterningChecker',
+    'org.checkerframework.checker.lock.LockChecker',
+    'org.checkerframework.checker.nullness.NullnessChecker',
+    'org.checkerframework.checker.nullness.NullnessRawnessChecker',
+    'org.checkerframework.checker.regex.RegexChecker',
+    'org.checkerframework.checker.signature.SignatureChecker'
+  ]
+  extraJavacArgs = [
+    '-AcheckPurityAnnotations'
+  ]
+}
 
 // In this section you declare where to find the dependencies of your project
 repositories {
