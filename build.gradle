@@ -9,7 +9,7 @@ buildscript {
 
 plugins {
   // Checker Framework pluggable type-checking
-  id 'org.checkerframework' version '0.3.0'
+  id 'org.checkerframework' version '0.3.4'
 
   // Enable when google-java-format handles type annotations better;
   // see https://github.com/google/google-java-format/issues/5
@@ -67,7 +67,7 @@ javadoc {
 }
 
 dependencies {
-  implementation group: 'org.plumelib', name: 'require-javadoc', version: '0.1.1'
+  implementation group: 'org.plumelib', name: 'require-javadoc', version: '0.1.2'
 }
 task requireJavadoc(type: Javadoc) {
   description = 'Ensures that Javadoc documentation exists.'
