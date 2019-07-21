@@ -62,14 +62,22 @@ dependencies {
     implementation group: 'org.mnode.ical4j', name: 'ical4j', version: '2.0.0'
 }
 
+/// Javadoc
+
 // Turn Javadoc warnings into errors.
 javadoc {
   options.addStringOption('Xwerror', '-Xdoclint:all')
   options.addStringOption('private', '-quiet')
 }
 
+task javadocWeb(type: Javadoc) {
+  source = sourceSets.main.allJava
+  destinationDir = file("/cse/web/research/plumelib/icalavailable/api")
+  classpath = project.sourceSets.main.compileClasspath
+}
+
 dependencies {
-  implementation group: 'org.plumelib', name: 'require-javadoc', version: '0.1.2'
+  compileOnly group: 'org.plumelib', name: 'require-javadoc', version: '0.1.2'
 }
 task requireJavadoc(type: Javadoc) {
   description = 'Ensures that Javadoc documentation exists.'
@@ -80,6 +88,9 @@ task requireJavadoc(type: Javadoc) {
   options.docletpath = project.sourceSets.main.compileClasspath as List
   options.doclet = "org.plumelib.javadoc.RequireJavadoc"
 }
+
+
+/// Emacs support
 
 /* Make Emacs TAGS table */
 task tags(type: Exec) {
