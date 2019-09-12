@@ -9,7 +9,7 @@ buildscript {
 
 plugins {
   // Checker Framework pluggable type-checking
-  id 'org.checkerframework' version '0.3.31' apply false
+  id 'org.checkerframework' version '0.4.0' apply false
 
   // Enable when google-java-format handles type annotations better;
   // see https://github.com/google/google-java-format/issues/5
