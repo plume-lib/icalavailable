@@ -14,17 +14,36 @@ plugins {
   // Enable when google-java-format handles type annotations better;
   // see https://github.com/google/google-java-format/issues/5
   // // Code formatting with Google Java Format; use targets "goJF" and "verJF".
-  // id "com.github.sherter.google-java-format" version "0.7.1"
+  // id 'com.github.sherter.google-java-format' version '0.7.1'
 }
 
-// Apply the java-library plugin to add support for Java Library
+// In this section you declare where to find the dependencies of your project
+repositories {
+    // Use jcenter for resolving your dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    // These dependencies are used internally, and not exposed to consumers on their own compile classpath.
+    implementation 'org.plumelib:options:1.0.2'
+
+    // Use JUnit test framework
+    testImplementation 'junit:junit:4.12'
+
+    // https://mvnrepository.com/artifact/org.mnode.ical4j/ical4j
+    implementation group: 'org.mnode.ical4j', name: 'ical4j', version: '2.0.0'
+}
+
 apply plugin: 'java-library'
 apply plugin: 'java'
-
 apply plugin: 'com.github.johnrengelman.shadow'
 
-// Checker Framework pluggable type-checking
+/// Checker Framework pluggable type-checking
+
 apply plugin: 'org.checkerframework'
+
 checkerFramework {
   checkers = [
     'org.checkerframework.checker.formatter.FormatterChecker',
@@ -54,25 +73,6 @@ if (project.hasProperty("cfLocal")) {
   }
 }
 
-// In this section you declare where to find the dependencies of your project
-repositories {
-    // Use jcenter for resolving your dependencies.
-    // You can declare any Maven/Ivy/file repository here.
-    mavenCentral()
-    jcenter()
-}
-
-dependencies {
-    // These dependencies are used internally, and not exposed to consumers on their own compile classpath.
-    implementation 'org.plumelib:options:1.0.2'
-
-    // Use JUnit test framework
-    testImplementation 'junit:junit:4.12'
-
-    // https://mvnrepository.com/artifact/org.mnode.ical4j/ical4j
-    implementation group: 'org.mnode.ical4j', name: 'ical4j', version: '2.0.0'
-}
-
 /// Javadoc
 
 // Turn Javadoc warnings into errors.
@@ -99,7 +99,6 @@ task requireJavadoc(type: Javadoc) {
   options.docletpath = project.sourceSets.main.compileClasspath as List
   options.doclet = "org.plumelib.javadoc.RequireJavadoc"
 }
-
 
 /// Emacs support
 
