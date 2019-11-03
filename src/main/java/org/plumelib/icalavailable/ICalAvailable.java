@@ -54,8 +54,9 @@ import org.plumelib.options.Options;
  * <!-- start options doc (DO NOT EDIT BY HAND) -->
  *
  * <ul>
- *   <li id="option:date"><b>--date=</b><i>string</i>. first date to summarize [default today]
- *   <li id="option:days"><b>--days=</b><i>int</i>. number of calendar days to summarize [default 8]
+ *   <li id="option:date"><b>--date=</b><i>string</i>. First date to summarize. [default today]
+ *   <li id="option:days"><b>--days=</b><i>int</i>. Number of calendar days to summarize. [default
+ *       8]
  *   <li id="option:iCal-URL"><b>--iCal-URL=</b><i>url</i> <code>[+]</code>. For a Google calendar:
  *       go to settings, then click on the green "ICAL" icon for the "private address".
  *   <li id="option:business-hours"><b>--business-hours=</b><i>string</i>. A list of time ranges,
@@ -65,7 +66,8 @@ import org.plumelib.options.Options;
  *       the system time zone.
  *   <li id="option:timezone2"><b>--timezone2=</b><i>timezone</i>. Time zone as an Olson timezone
  *       ID, e.g.: America/New_York. If set, then free times are printed in two time zones.
- *   <li id="option:debug"><b>--debug=</b><i>boolean</i>. enable debugging output [default false]
+ *   <li id="option:debug"><b>--debug=</b><i>boolean</i>. If true, enable debugging output. [default
+ *       false]
  * </ul>
  *
  * <code>[+]</code> marked option can be specified multiple times

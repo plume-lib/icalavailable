@@ -100,6 +100,20 @@ task requireJavadoc(type: Javadoc) {
   options.doclet = "org.plumelib.javadoc.RequireJavadoc"
 }
 
+task updateUserOptions(type: Javadoc, dependsOn: 'assemble') {
+  description "Updates printed documentation of command-line arguments."
+
+  source = sourceSets.main.allJava
+  classpath = project.sourceSets.main.compileClasspath
+  options.memberLevel = JavadocMemberLevel.PRIVATE
+  options.docletpath = project.sourceSets.main.runtimeClasspath as List
+  options.doclet = "org.plumelib.options.OptionsDoclet"
+  options.addStringOption("docfile", "${projectDir}/src/main/java/org/plumelib/icalavailable/ICalAvailable.java")
+  options.addStringOption("format", "javadoc")
+  options.addStringOption("i", "-quiet")
+  title = ""
+}
+
 /// Emacs support
 
 /* Make Emacs TAGS table */
