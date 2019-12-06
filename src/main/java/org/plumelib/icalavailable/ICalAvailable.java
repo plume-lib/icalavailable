@@ -27,10 +27,8 @@ import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 import net.fortuna.ical4j.model.component.CalendarComponent;
-import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.component.VFreeBusy;
 import net.fortuna.ical4j.model.parameter.FbType;
-import net.fortuna.ical4j.model.property.DtStart;
 import net.fortuna.ical4j.model.property.FreeBusy;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
@@ -479,6 +477,7 @@ public final class ICalAvailable {
         // getComponents() returns a raw ArrayList.  Expose its element type.
         ArrayList<@NonNull CalendarComponent> clist = calendar.getComponents();
         for (CalendarComponent c : clist) {
+          /* TODO
           if (c instanceof VEvent) {
             VEvent v = (VEvent) c;
             DtStart dts = v.getStartDate();
@@ -487,6 +486,7 @@ public final class ICalAvailable {
             // TODO: convert to the proper timezone.
             // Tricky: must deal with the possibility of RRULE:FREQ=
           }
+          */
           busyTimes.add(c);
         }
       }

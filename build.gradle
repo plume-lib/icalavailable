@@ -15,6 +15,9 @@ plugins {
   // see https://github.com/google/google-java-format/issues/5
   // // Code formatting with Google Java Format; use targets "goJF" and "verJF".
   // id 'com.github.sherter.google-java-format' version '0.7.1'
+
+  // Error Prone linter
+  id("net.ltgt.errorprone") version "1.1.1"
 }
 
 apply plugin: 'java-library'
@@ -36,6 +39,20 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.mnode.ical4j/ical4j
     implementation group: 'org.mnode.ical4j', name: 'ical4j', version: '2.0.0'
+}
+
+/// Error Prone linter
+
+dependencies {
+  errorprone("com.google.errorprone:error_prone_core:2.3.4")
+  // JDK 8 support for Error Prone:
+  errorproneJavac("com.google.errorprone:javac:9+181-r4173-1")
+}
+tasks.withType(JavaCompile).configureEach {
+  options.compilerArgs << "-Xlint:all,-processing" << "-Werror"
+  options.errorprone {
+    disable("ReferenceEquality") // Use Interning Checker instead.
+  }
 }
 
 /// Checker Framework pluggable type-checking
