@@ -32,7 +32,7 @@ repositories {
 
 dependencies {
     // These dependencies are used internally, and not exposed to consumers on their own compile classpath.
-    implementation 'org.plumelib:options:1.0.3'
+    implementation 'org.plumelib:options:1.0.4'
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
