@@ -318,7 +318,7 @@ public final class ICalAvailable {
   /**
    * Converts a time zone's printed representation to a shorter one, if possible.
    *
-   * @param timezone a printed representation to canonicalize
+   * @param tz a printed representation to canonicalize
    * @return either the argument, or a shorter representation if possible
    */
   @Pure
@@ -605,6 +605,7 @@ public final class ICalAvailable {
    *
    * @param d the date
    * @param tz the time zone
+   * @return a formatted representation of the date
    */
   static String formatDate(DateTime d, TimeZone tz) {
     df.setTimeZone(tz);
