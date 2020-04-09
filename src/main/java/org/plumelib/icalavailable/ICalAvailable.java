@@ -104,9 +104,12 @@ public final class ICalAvailable {
   @Option("time ranges during which appointments are permitted")
   public static String business_hours = "9am-5pm";
 
-  static List<Period> businessHours = new ArrayList<>(); // initialize to 9am-5pm
-  static List<Integer> businessDays = new ArrayList<>(); // initialize to Mon-Fri
+  /** The business hours, outside of which all times are unavailable. */
+  static List<Period> businessHours = new ArrayList<>();
+  /** The business days, outside of which all times are unavailable. */
+  static List<Integer> businessDays = new ArrayList<>();
 
+  // initialize business days to Mon-Fri
   static {
     businessDays.add(1);
     businessDays.add(2);
@@ -115,6 +118,7 @@ public final class ICalAvailable {
     businessDays.add(5);
   }
 
+  /** The time zone registry, for looking up time zone names. */
   static TimeZoneRegistry tzRegistry = TimeZoneRegistryFactory.getInstance().createRegistry();
 
   /**
@@ -154,12 +158,20 @@ public final class ICalAvailable {
   /** The appointments (the times that are unavailable for a meeting). */
   static List<Calendar> calendars = new ArrayList<>();
 
+  /** The time format. */
   static DateFormat tf = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.US);
+  /** The date format. */
   static DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US);
+  /** The day-of-week format. */
   static DateFormat dfDayOfWeek = new SimpleDateFormat("EEE");
 
   /// Procedures
 
+  /**
+   * Reads command-line options and sets fields
+   *
+   * @param args the command-line options
+   */
   @SuppressWarnings({
     "deprecation", // for iCal4j's use of Date.{get,set}Minutes
     "StringSplitter" // don't add dependence on Guava
@@ -261,7 +273,9 @@ public final class ICalAvailable {
     }
   }
 
+  /** Maps a short name to a canonical name, for commonly-used time zones. */
   static Map<String, String> canonicalTimezones = new HashMap<>();
+  /** Maps a long time zone name to a shorter one. */
   static Map<String, String> printedTimezones = new HashMap<>();
   // Yuck, this should really be a separate configuration file.
   static {
@@ -290,11 +304,23 @@ public final class ICalAvailable {
     printedTimezones.put("Pacific Standard Time", "Pacific");
   }
 
+  /**
+   * Converts a time zone abbreviation to a canonical form, if possible.
+   *
+   * @param timezone a time zone abbreviation to canonicalize
+   * @return either the argument, or its canonical name if possible
+   */
   static String canonicalizeTimezone(String timezone) {
     String result = canonicalTimezones.get(timezone.toLowerCase());
     return (result == null) ? timezone : result;
   }
 
+  /**
+   * Converts a time zone's printed representation to a shorter one, if possible.
+   *
+   * @param timezone a printed representation to canonicalize
+   * @return either the argument, or a shorter representation if possible
+   */
   @Pure
   static String printedTimezone(TimeZone tz) {
     String tzString = tz.getDisplayName();
@@ -302,6 +328,7 @@ public final class ICalAvailable {
     return (result == null) ? tzString : result;
   }
 
+  /** Matches a printed representation of a time. */
   static @Regex(4) Pattern timeRegexp =
       Pattern.compile("([0-2]?[0-9])(:([0-5][0-9]))?([aApP][mM])?");
 
@@ -344,7 +371,7 @@ public final class ICalAvailable {
     return result;
   }
 
-  // For debugging
+  /** Dump the options. For debugging. */
   static void printOptions() {
     System.out.println("business_hours: " + business_hours);
     System.out.println("businessHours: " + businessHours);
@@ -400,6 +427,13 @@ public final class ICalAvailable {
     }
   }
 
+  /**
+   * Formats a period as a range of times.
+   *
+   * @param p the period to format
+   * @param tz the time zone
+   * @return a range of times, from the beginning to the end of {@code p}
+   */
   static String rangeString(Period p, TimeZone tz) {
     tf.setTimeZone(tz);
     DateTime pstart = p.getStart();
@@ -410,6 +444,13 @@ public final class ICalAvailable {
     return rangeString;
   }
 
+  /**
+   * Formats a period as multiple time ranges.
+   *
+   * @param pl the periods
+   * @param tz the time zone
+   * @return a string representing multiple ranges of times
+   */
   static String periodListString(PeriodList pl, TimeZone tz) {
     tf.setTimeZone(tz);
     StringBuilder result = new StringBuilder();
@@ -446,6 +487,13 @@ public final class ICalAvailable {
 
   // TODO:  don't propose times that are before the current moment.
 
+  /**
+   * Return a all the times that are available on a single day.
+   *
+   * @param day the day on which to look for availability
+   * @param calendars the calendars that might contain conflicts
+   * @return the available times on the given day
+   */
   // Process day-by-day because otherwise weekends and evenings are included.
   @SuppressWarnings("unchecked") // for iCal4j
   @RequiresNonNull("tz1")
@@ -516,6 +564,7 @@ public final class ICalAvailable {
     return result;
   }
 
+  /** The date formats supported by {@link #parseDate}. */
   static SimpleDateFormat[] dateFormats = {
     new SimpleDateFormat("yyyy/MM/dd"),
     new SimpleDateFormat("MM/dd/yyyy"),
@@ -551,6 +600,12 @@ public final class ICalAvailable {
     throw new ParseException("bad date " + strDate, 0);
   }
 
+  /**
+   * Format a date.
+   *
+   * @param d the date
+   * @param tz the time zone
+   */
   static String formatDate(DateTime d, TimeZone tz) {
     df.setTimeZone(tz);
     String result = df.format(d);
