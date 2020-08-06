@@ -1,51 +1,46 @@
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:5.1.0'
-    }
-}
-
 plugins {
-  // Checker Framework pluggable type-checking
-  id 'org.checkerframework' version '0.5.8' apply false
+  id 'java'
+  id 'application'
 
-  // Enable when google-java-format handles type annotations better;
-  // see https://github.com/google/google-java-format/issues/5
-  // // Code formatting with Google Java Format; use targets "goJF" and "verJF".
+  // To create a fat jar build/libs/icalavailable-all.jar, run: ./gradlew shadowJar
+  id 'com.github.johnrengelman.shadow' version '6.0.0'
+
+  // Formatting is disabled due to poor handling of type annotations; wait until
+  // this issue is fixed: https://github.com/google/google-java-format/issues/5
+  // // Code formatting with Google Java Format; defines targets "goJF" and "verJF".
   // id 'com.github.sherter.google-java-format' version '0.7.1'
 
   // Error Prone linter
-  id("net.ltgt.errorprone") version "1.1.1"
+  id("net.ltgt.errorprone") version "1.2.1"
+
+  // Checker Framework pluggable type-checking
+  id 'org.checkerframework' version '0.5.9'
 }
 
-apply plugin: 'java-library'
-apply plugin: 'java'
-apply plugin: 'com.github.johnrengelman.shadow'
-
-// In this section you declare where to find the dependencies of your project
 repositories {
-    mavenCentral()
-    jcenter()
+  mavenCentral()
+  jcenter()
 }
 
 dependencies {
-    // These dependencies are used internally, and not exposed to consumers on their own compile classpath.
-    implementation 'org.plumelib:options:1.0.4'
+  implementation 'org.plumelib:options:1.0.4'
 
-    // https://mvnrepository.com/artifact/org.mnode.ical4j/ical4j
-    implementation group: 'org.mnode.ical4j', name: 'ical4j', version: '2.0.0'
+  // https://mvnrepository.com/artifact/org.mnode.ical4j/ical4j
+  implementation group: 'org.mnode.ical4j', name: 'ical4j', version: '2.0.0'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+application {
+  mainClassName = 'org.plumelib.icalavailable.ICalAvailable'
 }
 
 test {
-    useJUnitPlatform {
-        includeEngines 'junit-jupiter'
-        excludeEngines 'junit-vintage'
-    }
+  useJUnitPlatform {
+    includeEngines 'junit-jupiter'
+    excludeEngines 'junit-vintage'
+  }
 }
 
 /// Error Prone linter
@@ -101,13 +96,29 @@ if (project.hasProperty("cfLocal")) {
 javadoc {
   options.addStringOption('Xwerror', '-Xdoclint:all')
   options.addStringOption('private', '-quiet')
+  doLast {
+    if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
+      ant.replaceregexp(match:"@import url\\('resources/fonts/dejavu.css'\\);\\s*", replace:'',
+	flags:'g', byline:true) {
+	fileset(dir: destinationDir)
+      }
+    }
+  }
 }
 check.dependsOn javadoc
 
 task javadocWeb(type: Javadoc) {
   source = sourceSets.main.allJava
-  destinationDir = file("/cse/web/research/plumelib/icalavailable/api")
+  destinationDir = file("/cse/web/research/plumelib/${project.name}/api")
   classpath = project.sourceSets.main.compileClasspath
+  doLast {
+    if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
+      ant.replaceregexp(match:"@import url\\('resources/fonts/dejavu.css'\\);\\s*", replace:'',
+	flags:'g', byline:true) {
+	fileset(dir: destinationDir)
+      }
+    }
+  }
 }
 
 configurations {
@@ -123,10 +134,10 @@ task requireJavadoc(type: JavaExec) {
   args "src/main/java"
 }
 check.dependsOn requireJavadoc
+javadocWeb.dependsOn requireJavadoc
 
 task updateUserOptions(type: Javadoc, dependsOn: 'assemble') {
   description "Updates printed documentation of command-line arguments."
-
   source = sourceSets.main.allJava.files.sort()
   classpath = project.sourceSets.main.compileClasspath
   options.memberLevel = JavadocMemberLevel.PRIVATE
