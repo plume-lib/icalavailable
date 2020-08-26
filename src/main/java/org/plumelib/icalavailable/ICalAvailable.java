@@ -476,7 +476,9 @@ public final class ICalAvailable {
   static DateTime mergeDateAndTime(DateTime date, DateTime time) {
     if (!date.getTimeZone().equals(time.getTimeZone())) {
       throw new Error(
-          String.format("non-matching timezones: %s %s", date.getTimeZone(), time.getTimeZone()));
+          String.format(
+              "non-matching timezones: %s %s",
+              date.getTimeZone().getDisplayName(), time.getTimeZone().getDisplayName()));
     }
     DateTime result = new DateTime(date);
     result.setHours(time.getHours());
