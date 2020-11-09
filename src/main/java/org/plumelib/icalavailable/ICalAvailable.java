@@ -347,8 +347,7 @@ public final class ICalAvailable {
       System.err.println("Bad time: " + time);
       System.exit(1);
     }
-    @SuppressWarnings(
-        "nullness") // Regex Checker imprecision:  matches() guarantees group 1 exists in regexp
+    @SuppressWarnings("nullness") // for this regex, matches() guarantees that group 1 matched
     @NonNull String hourString = m.group(1);
     String minuteString = m.group(3);
     String ampmString = m.group(4);
