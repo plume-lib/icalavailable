@@ -1,7 +1,7 @@
 # ICalAvailable
 
 Given one or more calendars in
-[iCalendar format](http://en.wikipedia.org/wiki/ICalendar)
+[iCalendar format](http://en.wikipedia.org/wiki/ICalendar),
 produces a textual summary of available times.
 This is useful for sending someone a list of acceptable times for a meeting,
 if you need to negotiate a meeting time via text rather than sharing a calendar.
