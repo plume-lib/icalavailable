@@ -11,7 +11,6 @@ Here is example output:
 ```
 Tue Nov 17, 2020:
 8:30am to 10:00am
-12:00pm to 12:05pm
 12:45pm to 4:00pm
 
 Wed Nov 18, 2020:
@@ -22,7 +21,6 @@ Wed Nov 18, 2020:
 Thu Nov 19, 2020:
 8:30am to 10:00am
 10:45am to 11:00am
-12:00pm to 12:05pm
 12:45pm to 2:00pm
 3:00pm to 5:00pm
 ```
@@ -34,7 +32,6 @@ Timezone: Pacific  [Timezone: Eastern]
 
 Tue Nov 17, 2020:
 8:30am to 10:00am   [11:30am to 1:00pm]
-12:00pm to 12:05pm  [3:00pm to 3:05pm]
 12:45pm to 4:00pm   [3:45pm to 7:00pm]
 
 Wed Nov 18, 2020:
