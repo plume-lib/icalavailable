@@ -333,7 +333,7 @@ public final class ICalAvailable {
       Pattern.compile("([0-2]?[0-9])(:([0-5][0-9]))?([aApP][mM])?");
 
   /**
-   * Parse a time like "9:30pm".
+   * Parse a time like "9:30pm". The result's time zone is {@code tz1}.
    *
    * @param time the string to parse as a time
    * @return the time represented by {@code time}
