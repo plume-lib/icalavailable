@@ -1,0 +1,14 @@
+version: 2
+updates:
+- package-ecosystem: gradle
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: org.mnode.ical4j:ical4j
+    versions:
+    - "> 2.0.0"
+  - dependency-name: com.google.errorprone:javac
+    versions:
+    - 1.8.0-u20
