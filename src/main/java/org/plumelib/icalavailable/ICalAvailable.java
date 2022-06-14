@@ -52,23 +52,23 @@ import org.plumelib.options.Options;
  * <!-- start options doc (DO NOT EDIT BY HAND) -->
  *
  * <ul>
- *   <li id="option:date"><b>--date=</b><i>string</i>. First date to summarize. [default today]
- *   <li id="option:days"><b>--days=</b><i>int</i>. Number of calendar days to summarize. [default
+ *   <li id="option:date"><b>--date=</b><i>string</i>. First date to summarize. [default: today]
+ *   <li id="option:days"><b>--days=</b><i>int</i>. Number of calendar days to summarize. [default:
  *       8]
  *   <li id="option:iCal-URL"><b>--iCal-URL=</b><i>url</i> <code>[+]</code>. For a Google calendar:
  *       go to settings, then click on the green "ICAL" icon for the "private address".
  *   <li id="option:business-hours"><b>--business-hours=</b><i>string</i>. A list of time ranges,
- *       expressed as a String. Example: 9am-5pm,7:30pm-9:30pm [default 9am-5pm]
+ *       expressed as a String. Example: 9am-5pm,7:30pm-9:30pm [default: 9am-5pm]
  *   <li id="option:timezone1"><b>--timezone1=</b><i>timezone</i>. Time zone as an Olson timezone
  *       ID, e.g.: America/New_York. Available times are printed in this time zone. It defaults to
  *       the system time zone.
  *   <li id="option:timezone2"><b>--timezone2=</b><i>timezone</i>. Time zone as an Olson timezone
  *       ID, e.g.: America/New_York. If set, then free times are printed in two time zones.
- *   <li id="option:debug"><b>--debug=</b><i>boolean</i>. If true, enable debugging output. [default
- *       false]
+ *   <li id="option:debug"><b>--debug=</b><i>boolean</i>. If true, enable debugging output.
+ *       [default: false]
  * </ul>
  *
- * <code>[+]</code> marked option can be specified multiple times
+ * <code>[+]</code> means option can be specified multiple times
  * <!-- end options doc -->
  * If you are perplexed because of odd results, maybe it is because of the transparency of your iCal
  * items (this shows up as "available/busy" in Google calendar).
