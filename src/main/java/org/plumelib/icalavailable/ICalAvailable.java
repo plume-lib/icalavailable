@@ -314,8 +314,7 @@ public final class ICalAvailable {
    * @return either the argument, or its canonical name if possible
    */
   static String canonicalizeTimezone(String timezone) {
-    String result = canonicalTimezones.get(timezone.toLowerCase());
-    return (result == null) ? timezone : result;
+    return canonicalTimezones.getOrDefault(timezone.toLowerCase(), timezone);
   }
 
   /**
@@ -327,8 +326,7 @@ public final class ICalAvailable {
   @Pure
   static String printedTimezone(TimeZone tz) {
     String tzString = tz.getDisplayName();
-    String result = printedTimezones.get(tzString);
-    return (result == null) ? tzString : result;
+    return printedTimezones.getOrDefault(tzString, tzString);
   }
 
   /** Matches a printed representation of a time. */
