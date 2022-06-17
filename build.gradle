@@ -14,7 +14,7 @@ plugins {
   id("net.ltgt.errorprone") version "2.0.2"
 
   // Checker Framework pluggable type-checking
-  id 'org.checkerframework' version '0.6.11'
+  id 'org.checkerframework' version '0.6.13'
 }
 
 repositories {
@@ -65,15 +65,18 @@ apply plugin: 'org.checkerframework'
 
 checkerFramework {
   checkers = [
+    // No need to run CalledMethodsChecker, because ResourceLeakChecker does so.
+    // 'org.checkerframework.checker.calledmethods.CalledMethodsChecker',
     'org.checkerframework.checker.formatter.FormatterChecker',
     'org.checkerframework.checker.index.IndexChecker',
     'org.checkerframework.checker.interning.InterningChecker',
     'org.checkerframework.checker.lock.LockChecker',
     'org.checkerframework.checker.nullness.NullnessChecker',
     'org.checkerframework.checker.regex.RegexChecker',
+    'org.checkerframework.checker.resourceleak.ResourceLeakChecker',
     'org.checkerframework.checker.signature.SignatureChecker',
     'org.checkerframework.checker.signedness.SignednessChecker',
-    'org.checkerframework.common.initializedfields.InitializedFieldsChecker'
+    'org.checkerframework.common.initializedfields.InitializedFieldsChecker',
   ]
   extraJavacArgs = [
     '-Werror',

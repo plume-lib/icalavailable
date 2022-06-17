@@ -232,26 +232,29 @@ public final class ICalAvailable {
         URL url = new URL(URL);
         CalendarBuilder builder = new CalendarBuilder();
         Calendar c;
-        try {
-          c = builder.build(url.openStream());
-        } catch (ParserException pe) {
-          if ("Error at line 1: Expected [BEGIN], read [<HTML>]".equals(pe.getMessage())) {
-            System.out.println();
-            System.out.println("It is possible that the calendar has moved.");
-            // Debugging: write the URL contents to standard output
-            URL url2 = new URL(URL);
-            InputStream url_is = url2.openStream();
-            System.out.printf("URL: %s%n", url2);
-            System.out.println("Contents:");
-            byte[] buffer = new byte[1024];
-            int len = url_is.read(buffer);
-            while (len != -1) {
-              System.out.write(buffer, 0, len);
-              len = url_is.read(buffer);
+        try (InputStream urlStream = url.openStream()) {
+          try {
+            c = builder.build(urlStream);
+          } catch (ParserException pe) {
+            if ("Error at line 1: Expected [BEGIN], read [<HTML>]".equals(pe.getMessage())) {
+              System.out.println();
+              System.out.println("It is possible that the calendar has moved.");
+              // Debugging: write the URL contents to standard output
+              URL url2 = new URL(URL);
+              try (InputStream url_is = url2.openStream()) {
+                System.out.printf("URL: %s%n", url2);
+                System.out.println("Contents:");
+                byte[] buffer = new byte[1024];
+                int len = url_is.read(buffer);
+                while (len != -1) {
+                  System.out.write(buffer, 0, len);
+                  len = url_is.read(buffer);
+                }
+                System.out.println();
+              }
             }
-            System.out.println();
+            throw pe;
           }
-          throw pe;
         }
         calendars.add(c);
       } catch (Exception e) {
