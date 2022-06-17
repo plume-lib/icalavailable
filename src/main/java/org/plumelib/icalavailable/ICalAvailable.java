@@ -326,7 +326,7 @@ public final class ICalAvailable {
   @Pure
   static String printedTimezone(TimeZone tz) {
     String tzString = tz.getDisplayName();
-    String result = printedTimezones.getOrDefault(tzString, tzString);
+    return printedTimezones.getOrDefault(tzString, tzString);
   }
 
   /** Matches a printed representation of a time. */
