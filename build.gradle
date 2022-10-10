@@ -12,7 +12,7 @@ plugins {
   id("net.ltgt.errorprone") version "2.0.2"
 
   // Checker Framework pluggable type-checking
-  id 'org.checkerframework' version '0.6.16'
+  id 'org.checkerframework' version '0.6.17'
 }
 
 repositories {
@@ -29,7 +29,7 @@ dependencies {
   // https://mvnrepository.com/artifact/org.mnode.ical4j/ical4j
   implementation group: 'org.mnode.ical4j', name: 'ical4j', version: '2.0.0'
 
-  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.1'
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 
@@ -153,7 +153,7 @@ configurations {
   requireJavadoc
 }
 dependencies {
-  requireJavadoc "org.plumelib:require-javadoc:1.0.4"
+  requireJavadoc "org.plumelib:require-javadoc:1.0.5"
 }
 task requireJavadoc(type: JavaExec) {
   description = 'Ensures that Javadoc documentation exists.'
