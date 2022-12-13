@@ -2,7 +2,7 @@ plugins {
   id 'java'
   id 'application'
 
-  // To create a fat jar build/libs/icalavailable-all.jar, run: ./gradlew shadowJar
+  // To create a fat jar build/libs/...-all.jar, run: ./gradlew shadowJar
   id 'com.github.johnrengelman.shadow' version '7.1.2'
 
   // Code formatting; defines targets "spotlessApply" and "spotlessCheck"
@@ -20,14 +20,12 @@ repositories {
 }
 
 dependencies {
+  implementation 'org.mnode.ical4j:ical4j:2.0.0'
   if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
     implementation 'org.plumelib:options:1.0.6'
   } else {
     implementation 'org.plumelib:options:2.0.3'
   }
-
-  // https://mvnrepository.com/artifact/org.mnode.ical4j/ical4j
-  implementation group: 'org.mnode.ical4j', name: 'ical4j', version: '2.0.0'
 
   testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.1'
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
