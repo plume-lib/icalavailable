@@ -52,16 +52,15 @@ spotless {
     // define the files to apply `misc` to
     target '*.md', '.gitignore'
 
-      // define the steps to apply to those files
-      trimTrailingWhitespace()
-      indentWithSpaces(2)
-      endWithNewline()
-    }
-    java {
-      targetExclude('**/WeakIdentityHashMap.java')
-      googleJavaFormat()
-      formatAnnotations()
-    }
+    // define the steps to apply to those files
+    trimTrailingWhitespace()
+    indentWithSpaces(2)
+    endWithNewline()
+  }
+  java {
+    targetExclude('**/WeakIdentityHashMap.java')
+    googleJavaFormat()
+    formatAnnotations()
   }
   groovyGradle {
     target '**/*.gradle'
