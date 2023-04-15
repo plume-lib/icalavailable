@@ -24,7 +24,7 @@ dependencies {
   implementation 'org.mnode.ical4j:ical4j:2.2.7'
   // TODO: Shouldn't this depend on the targetCompatibility instead?
   if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
-    implementation 'org.plumelib:options:1.0.6'
+    implementation 'org.plumelib:options:2.0.3'
   } else {
     implementation 'org.plumelib:options:2.0.3'
   }
