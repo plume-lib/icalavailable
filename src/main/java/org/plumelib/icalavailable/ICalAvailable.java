@@ -314,7 +314,7 @@ public final class ICalAvailable {
    * @return either the argument, or its canonical name if possible
    */
   static String canonicalizeTimezone(String timezone) {
-    return canonicalTimezones.getOrDefault(timezone.toLowerCase(), timezone);
+    return canonicalTimezones.getOrDefault(timezone.toLowerCase(Locale.getDefault()), timezone);
   }
 
   /**
@@ -354,7 +354,7 @@ public final class ICalAvailable {
     String ampmString = m.group(4);
 
     int hour = Integer.parseInt(hourString);
-    if ((ampmString != null) && ampmString.toLowerCase().equals("pm")) {
+    if ((ampmString != null) && ampmString.toLowerCase(Locale.getDefault()).equals("pm")) {
       hour += 12;
     }
     int minute = 0;
