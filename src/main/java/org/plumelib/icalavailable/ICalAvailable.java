@@ -106,6 +106,7 @@ public final class ICalAvailable {
 
   /** The business hours, outside of which all times are unavailable. */
   static List<Period> businessHours = new ArrayList<>();
+
   /** The business days, outside of which all times are unavailable. */
   static List<Integer> businessDays = new ArrayList<>();
 
@@ -160,8 +161,10 @@ public final class ICalAvailable {
 
   /** The time format. */
   static DateFormat tf = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.US);
+
   /** The date format. */
   static DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US);
+
   /** The day-of-week format. */
   static DateFormat dfDayOfWeek = new SimpleDateFormat("EEE");
 
@@ -278,8 +281,10 @@ public final class ICalAvailable {
 
   /** Maps a short name to a canonical name, for commonly-used time zones. */
   static Map<String, String> canonicalTimezones = new HashMap<>();
+
   /** Maps a long time zone name to a shorter one. */
   static Map<String, String> printedTimezones = new HashMap<>();
+
   // Yuck, this should really be a separate configuration file.
   static {
     canonicalTimezones.put("eastern", "America/New_York");
