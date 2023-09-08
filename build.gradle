@@ -32,13 +32,8 @@ application {
   mainClass = 'org.plumelib.icalavailable.ICalAvailable'
 }
 
-if (JavaVersion.current().compareTo(org.gradle.api.JavaVersion.VERSION_20) < 0) {
-  sourceCompatibility = 1.8
-  targetCompatibility = 1.8
-} else {
-  sourceCompatibility = 11
-  targetCompatibility = 11
-}
+sourceCompatibility = 11
+targetCompatibility = 11
 
 test {
   useJUnitPlatform {
@@ -80,7 +75,6 @@ tasks.withType(JavaCompile).configureEach {
   // "-processing" avoids javac warning "No processor claimed any of these annotations".
   options.compilerArgs << '-Xlint:all,-processing' << '-Werror'
   options.errorprone {
-    enabled = JavaVersion.current() != JavaVersion.VERSION_1_8
     disable('ReferenceEquality') // Use Interning Checker instead.
   }
 }
@@ -129,9 +123,7 @@ if (project.hasProperty('cfLocal')) {
 javadoc {
   options.addStringOption('Xwerror', '-Xdoclint:all')
   options.addStringOption('private', '-quiet')
-  if (JavaVersion.current().compareTo(org.gradle.api.JavaVersion.VERSION_1_9) >= 0) {
-    options.addStringOption('source', '8')
-  }
+  options.addStringOption('source', '11')
   doLast {
     ant.replaceregexp(match:"@import url\\('resources/fonts/dejavu.css'\\);\\s*", replace:'',
     flags:'g', byline:true) {
@@ -146,9 +138,7 @@ task javadocWeb(type: Javadoc) {
   source = sourceSets.main.allJava
   destinationDir = file("/cse/web/research/plumelib/${project.name}/api")
   classpath = project.sourceSets.main.compileClasspath
-  if (JavaVersion.current().compareTo(org.gradle.api.JavaVersion.VERSION_1_9) >= 0) {
-    options.addStringOption('source', '8')
-  }
+  options.addStringOption('source', '11')
   doLast {
     ant.replaceregexp(match:"@import url\\('resources/fonts/dejavu.css'\\);\\s*", replace:'',
     flags:'g', byline:true) {
