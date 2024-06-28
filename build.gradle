@@ -24,7 +24,7 @@ repositories {
 ext.errorproneVersion = '2.28.0'
 
 dependencies {
-  implementation 'org.mnode.ical4j:ical4j:2.2.7'
+  implementation 'org.mnode.ical4j:ical4j:4.0.1'
   implementation 'org.plumelib:options:2.0.3'
 
   compileOnly "com.google.errorprone:error_prone_annotations:${errorproneVersion}"
