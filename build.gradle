@@ -24,6 +24,10 @@ repositories {
 ext.errorproneVersion = '2.28.0'
 
 dependencies {
+  // ical4j version 4 deprecates its own date representation and uses java.time.* instead.  This
+  // requires massive refactorings in client code (such as icalavailable).  ical4j provides no
+  // migration guidance, and not even an acknowledgment of the change in its relase notes.  So,
+  // don't bother to upgrade.
   implementation 'org.mnode.ical4j:ical4j:2.2.7'
   implementation 'org.plumelib:options:2.0.3'
 
