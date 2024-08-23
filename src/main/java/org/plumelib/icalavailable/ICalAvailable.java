@@ -80,7 +80,7 @@ public final class ICalAvailable {
     throw new Error("do not instantiate");
   }
 
-  /// User options
+  // User options
 
   /** First date to summarize. */
   @Option("first date to summarize")
@@ -150,7 +150,7 @@ public final class ICalAvailable {
   /** The TimeZone represented by string {@link #timezone2}. */
   static @Nullable TimeZone tz2;
 
-  /// Other variables
+  // Other variables
 
   /** If true, enable debugging output. */
   @Option("enable debugging output")
@@ -168,7 +168,7 @@ public final class ICalAvailable {
   /** The day-of-week format. */
   static DateFormat dfDayOfWeek = new SimpleDateFormat("EEE");
 
-  /// Procedures
+  // Procedures
 
   /**
    * Reads command-line options and sets fields
