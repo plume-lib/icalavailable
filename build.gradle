@@ -35,7 +35,7 @@ dependencies {
   implementation 'org.mnode.ical4j:ical4j:2.2.7'
   implementation 'org.plumelib:options:2.0.3'
 
-  testImplementation("org.junit.jupiter:junit-jupiter:5.13.0")
+  testImplementation("org.junit.jupiter:junit-jupiter:5.13.1")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
