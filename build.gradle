@@ -215,7 +215,7 @@ tasks.register('requireJavadoc', JavaExec) {
 check.dependsOn requireJavadoc
 javadocWeb.dependsOn requireJavadoc
 
-task.register('updateUserOptions', Javadoc) {
+tasks.register('updateUserOptions', Javadoc) {
   dependsOn('assemble')
   description = 'Updates printed documentation of command-line arguments.'
   source = sourceSets.main.allJava.files.sort()
