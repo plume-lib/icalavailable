@@ -17,9 +17,8 @@ plugins {
 }
 
 repositories {
-  gradlePluginPortal()
   mavenCentral()
-  maven { url = "https://central.sonatype.com/repository/maven-snapshots/" }
+  maven { url = 'https://central.sonatype.com/repository/maven-snapshots/' }
   gradlePluginPortal()
 }
 
