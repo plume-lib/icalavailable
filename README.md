@@ -8,7 +8,7 @@ if you need to negotiate a meeting time via text rather than sharing a calendar.
 
 Here is example output:
 
-```
+```output
 Tue Nov 17, 2020:
 8:30am to 10:00am
 12:45pm to 4:00pm
@@ -25,9 +25,12 @@ Thu Nov 19, 2020:
 3:00pm to 5:00pm
 ```
 
-You can provide [command-line arguments](http://plumelib.org/icalavailable/api/org/plumelib/icalavailable/ICalAvailable.html) to adjust the date range, indicate your working hours, provide times in multiple time zones, etc.  Here is an example of output for multiple time zones:
+You can provide [command-line
+arguments](http://plumelib.org/icalavailable/api/org/plumelib/icalavailable/ICalAvailable.html)
+to adjust the date range, indicate your working hours, provide times in multiple
+time zones, etc.  Here is an example of output for multiple time zones:
 
-```
+```output
 Timezone: Pacific  [Timezone: Eastern]
 
 Tue Nov 17, 2020:
