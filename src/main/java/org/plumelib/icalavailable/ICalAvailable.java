@@ -73,6 +73,7 @@ import org.plumelib.options.Options;
  * If you are perplexed because of odd results, maybe it is because of the transparency of your iCal
  * items (this shows up as "available/busy" in Google calendar).
  */
+@SuppressWarnings("PMD") // todo
 public final class ICalAvailable {
 
   /** This class is a collection of methods; it does not represent anything. */
@@ -464,7 +465,8 @@ public final class ICalAvailable {
     for (Object p : pl) {
       assert p != null
           : "@AssumeAssertion(nullness): non-generic container class; elements are non-null";
-      result.append(rangeString((Period) p, tz) + "\n");
+      result.append(rangeString((Period) p, tz));
+      result.append('\n');
     }
     return result.toString();
   }
