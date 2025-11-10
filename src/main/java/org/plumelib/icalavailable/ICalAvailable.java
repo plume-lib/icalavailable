@@ -178,7 +178,6 @@ public final class ICalAvailable {
    */
   @SuppressWarnings({
     "deprecation", // for iCal4j's use of Date.{get,set}Minutes
-    "StringSplitter" // don't add dependence on Guava
   })
   @EnsuresNonNull("tz1")
   static void processOptions(String[] args) {
@@ -268,8 +267,8 @@ public final class ICalAvailable {
       }
     }
 
-    for (String range : business_hours.split(",")) {
-      String[] startEnd = range.split("-");
+    for (String range : business_hours.split(",", -1)) {
+      String[] startEnd = range.split("-", -1);
       if (startEnd.length != 2) {
         System.err.println("Bad time range: " + range);
         System.exit(1);
