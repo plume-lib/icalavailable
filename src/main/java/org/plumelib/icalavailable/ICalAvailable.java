@@ -271,7 +271,7 @@ public final class ICalAvailable {
 
   // Yuck, this should really be a separate configuration file.
   /** Maps a short name to a canonical name, for commonly-used time zones. */
-  static Map<String, String> canonicalTimezones =
+  static final Map<String, String> canonicalTimezones =
       Map.ofEntries(
           Map.entry("eastern", "America/New_York"),
           Map.entry("est", "America/New_York"),
@@ -293,7 +293,7 @@ public final class ICalAvailable {
 
   // Don't include "Mountain Standard Time" due to Arizona weirdness; we want to know MST vs. MDT.
   /** Maps a long time zone name to a shorter one. */
-  static Map<String, String> printedTimezones =
+  static final Map<String, String> printedTimezones =
       Map.of(
           "Eastern Standard Time", "Eastern",
           "Central Standard Time", "Central",
