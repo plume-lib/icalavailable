@@ -7,7 +7,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -109,16 +108,7 @@ public final class ICalAvailable {
   static List<Period> businessHours = new ArrayList<>();
 
   /** The business days, outside of which all times are unavailable. */
-  static List<Integer> businessDays = new ArrayList<>();
-
-  // initialize business days to Mon-Fri
-  static {
-    businessDays.add(1);
-    businessDays.add(2);
-    businessDays.add(3);
-    businessDays.add(4);
-    businessDays.add(5);
-  }
+  static List<Integer> businessDays = List.of(1, 2, 3, 4, 5);
 
   /** The time zone registry, for looking up time zone names. */
   static TimeZoneRegistry tzRegistry = TimeZoneRegistryFactory.getInstance().createRegistry();
@@ -279,38 +269,35 @@ public final class ICalAvailable {
     }
   }
 
-  /** Maps a short name to a canonical name, for commonly-used time zones. */
-  static Map<String, String> canonicalTimezones = new HashMap<>();
-
-  /** Maps a long time zone name to a shorter one. */
-  static Map<String, String> printedTimezones = new HashMap<>();
-
   // Yuck, this should really be a separate configuration file.
-  static {
-    canonicalTimezones.put("eastern", "America/New_York");
-    canonicalTimezones.put("est", "America/New_York");
-    canonicalTimezones.put("edt", "America/New_York");
-    canonicalTimezones.put("boston", "America/New_York");
-    canonicalTimezones.put("america/boston", "America/New_York");
-    canonicalTimezones.put("central", "America/Chicago");
-    canonicalTimezones.put("mountain", "America/Denver");
-    canonicalTimezones.put("arizona", "America/Phoenix");
-    canonicalTimezones.put("pacific", "America/Los_Angeles");
-    canonicalTimezones.put("pst", "America/Los_Angeles");
-    canonicalTimezones.put("pacific standard time", "America/Los_Angeles");
-    canonicalTimezones.put("pdt", "America/Los_Angeles");
-    canonicalTimezones.put("india", "Asia/Calcutta");
-    canonicalTimezones.put("china", "Asia/Shanghai");
-    canonicalTimezones.put("berlin", "Europe/Berlin");
-    canonicalTimezones.put("israel", "Asia/Tel_Aviv");
-    canonicalTimezones.put("art", "America/Buenos_Aires");
+  /** Maps a short name to a canonical name, for commonly-used time zones. */
+  static Map<String, String> canonicalTimezones =
+      Map.ofEntries(
+          Map.entry("eastern", "America/New_York"),
+          Map.entry("est", "America/New_York"),
+          Map.entry("edt", "America/New_York"),
+          Map.entry("boston", "America/New_York"),
+          Map.entry("america/boston", "America/New_York"),
+          Map.entry("central", "America/Chicago"),
+          Map.entry("mountain", "America/Denver"),
+          Map.entry("arizona", "America/Phoenix"),
+          Map.entry("pacific", "America/Los_Angeles"),
+          Map.entry("pst", "America/Los_Angeles"),
+          Map.entry("pacific standard time", "America/Los_Angeles"),
+          Map.entry("pdt", "America/Los_Angeles"),
+          Map.entry("india", "Asia/Calcutta"),
+          Map.entry("china", "Asia/Shanghai"),
+          Map.entry("berlin", "Europe/Berlin"),
+          Map.entry("israel", "Asia/Tel_Aviv"),
+          Map.entry("art", "America/Buenos_Aires"));
 
-    printedTimezones.put("Eastern Standard Time", "Eastern");
-    printedTimezones.put("Central Standard Time", "Central");
-    // Don't do this due to Arizona wierdness; we want to know MST vs. MDT
-    // printedTimezones.put("Mountain Standard Time", "Mountain");
-    printedTimezones.put("Pacific Standard Time", "Pacific");
-  }
+  // Don't include "Mountain Standard Time" due to Arizona weirdness; we want to know MST vs. MDT.
+  /** Maps a long time zone name to a shorter one. */
+  static Map<String, String> printedTimezones =
+      Map.of(
+          "Eastern Standard Time", "Eastern",
+          "Central Standard Time", "Central",
+          "Pacific Standard Time", "Pacific");
 
   /**
    * Converts a time zone abbreviation to a canonical form, if possible.
@@ -482,9 +469,8 @@ public final class ICalAvailable {
   static DateTime mergeDateAndTime(DateTime date, DateTime time) {
     if (!date.getTimeZone().equals(time.getTimeZone())) {
       throw new Error(
-          String.format(
-              "non-matching timezones: %s %s",
-              date.getTimeZone().getDisplayName(), time.getTimeZone().getDisplayName()));
+          "non-matching timezones: %s %s"
+              .formatted(date.getTimeZone().getDisplayName(), time.getTimeZone().getDisplayName()));
     }
     DateTime result = new DateTime(date);
     result.setHours(time.getHours());
