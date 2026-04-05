@@ -203,7 +203,7 @@ public final class ICalAvailable {
         start_date = new DateTime(parseDate(date));
       }
     } catch (Exception e) {
-      if (Pattern.matches(".*/.*", date) && !Pattern.matches(".*/.*/", date)) {
+      if (date.contains("/") && date.indexOf('/') == date.lastIndexOf('/')) {
         System.err.println("Could not parse date (missing year?): " + date);
         System.exit(1);
       } else {
@@ -346,7 +346,7 @@ public final class ICalAvailable {
     String ampmString = m.group(4);
 
     int hour = Integer.parseInt(hourString);
-    if ((ampmString != null) && ampmString.toLowerCase(Locale.getDefault()).equals("pm")) {
+    if ((ampmString != null) && ampmString.equalsIgnoreCase("pm")) {
       hour += 12;
     }
     int minute = 0;
@@ -502,6 +502,28 @@ public final class ICalAvailable {
       return result;
     }
 
+    ComponentList<CalendarComponent> busyTimes = new ComponentList<>();
+    // Problem:  any all-day events will be treated as UTC.
+    // Instead, they should be converted to local time (tz1).
+    // But VFreeBusy does not support this, so I may need to convert
+    // daily events into a different format before inserting them.
+    for (Calendar calendar : calendars) {
+      // getComponents() returns a raw ArrayList.  Expose its element type.
+      ArrayList<@NonNull CalendarComponent> clist = calendar.getComponents();
+      for (CalendarComponent c : clist) {
+        /* TODO
+        if (c instanceof VEvent) {
+          VEvent v = (VEvent) c;
+          DtStart dts = v.getStartDate();
+          Parameter dtsValue = dts.getParameter("VALUE");
+          boolean allDay = (dtsValue != null) && dtsValue.getValue().equals("DATE");
+          // TODO: convert to the proper timezone.
+          // Tricky: must deal with the possibility of RRULE:FREQ=
+        }
+        */
+        busyTimes.add(c);
+      }
+    }
     for (Period bh : businessHours) {
       DateTime start = mergeDateAndTime(day, bh.getStart());
       DateTime end = mergeDateAndTime(day, bh.getEnd());
@@ -509,28 +531,6 @@ public final class ICalAvailable {
       VFreeBusy request = new VFreeBusy(start, end, new Dur(0, 0, 0, 1));
       if (debug) {
         System.out.println("Request = " + request);
-      }
-      ComponentList<CalendarComponent> busyTimes = new ComponentList<>();
-      // Problem:  any all-day events will be treated as UTC.
-      // Instead, they should be converted to local time (tz1).
-      // But VFreeBusy does not support this, so I may need to convert
-      // daily events into a different format before inserting them.
-      for (Calendar calendar : calendars) {
-        // getComponents() returns a raw ArrayList.  Expose its element type.
-        ArrayList<@NonNull CalendarComponent> clist = calendar.getComponents();
-        for (CalendarComponent c : clist) {
-          /* TODO
-          if (c instanceof VEvent) {
-            VEvent v = (VEvent) c;
-            DtStart dts = v.getStartDate();
-            Parameter dtsValue = dts.getParameter("VALUE");
-            boolean allDay = (dtsValue != null) && dtsValue.getValue().equals("DATE");
-            // TODO: convert to the proper timezone.
-            // Tricky: must deal with the possibility of RRULE:FREQ=
-          }
-          */
-          busyTimes.add(c);
-        }
       }
       VFreeBusy response = new VFreeBusy(request, busyTimes);
       if (debug) {
@@ -577,7 +577,7 @@ public final class ICalAvailable {
    * @see dateFormats
    */
   static java.util.Date parseDate(String strDate) throws ParseException {
-    if (Pattern.matches("^[0-9][0-9]?/[0-9][0-9]?$", date)) {
+    if (Pattern.matches("^[0-9][0-9]?/[0-9][0-9]?$", strDate)) {
       @SuppressWarnings("deprecation") // for iCal4j
       int year = new Date().getYear() + 1900;
       strDate = strDate + "/" + year;
