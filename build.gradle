@@ -32,7 +32,7 @@ repositories {
 dependencies {
   // ical4j version 4 deprecates its own date representation and uses java.time.* instead.  This
   // requires massive refactorings in client code (such as icalavailable).  ical4j provides no
-  // migration guidance, and not even an acknowledgment of the change in its relase notes.  So,
+  // migration guidance, and not even an acknowledgment of the change in its release notes.  So,
   // don't bother to upgrade.
   implementation(libs.ical4j)
   implementation(libs.options)
