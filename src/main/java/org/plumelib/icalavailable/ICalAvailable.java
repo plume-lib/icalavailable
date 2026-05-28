@@ -467,10 +467,12 @@ public final class ICalAvailable {
    */
   @SuppressWarnings("deprecation") // for iCal4j
   static DateTime mergeDateAndTime(DateTime date, DateTime time) {
-    if (!date.getTimeZone().equals(time.getTimeZone())) {
+    TimeZone dateTz = date.getTimeZone();
+    TimeZone timeTz = time.getTimeZone();
+    if (!dateTz.equals(timeTz)) {
       throw new Error(
           "non-matching timezones: %s %s"
-              .formatted(date.getTimeZone().getDisplayName(), time.getTimeZone().getDisplayName()));
+              .formatted(dateTz.getDisplayName(), timeTz.getDisplayName()));
     }
     DateTime result = new DateTime(date);
     result.setHours(time.getHours());
