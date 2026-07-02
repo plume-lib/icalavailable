@@ -6,7 +6,7 @@
 ;; Implementation that uses the iCal format
 (defun ical-available (&optional days start-date timezone2)
   "Insert a summary of my available times from ical.
-Optional prefix argument DAYS is days how many days to show (default 8).
+Optional prefix argument DAYS is how many days to show (default 8).
 With just C-u prefix argument, prompt for starting date and days."
   (interactive "P")
   (let* ((ical-args
