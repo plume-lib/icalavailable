@@ -326,7 +326,7 @@ public final class ICalAvailable {
       Pattern.compile("([0-2]?[0-9])(:([0-5][0-9]))?([aApP][mM])?");
 
   /**
-   * Parse a time like "9:30pm". The result's time zone is {@code tz1}.
+   * Parses a time like "9:30pm". The result's time zone is {@code tz1}.
    *
    * @param time the string to parse as a time
    * @return the time represented by {@code time}
@@ -363,7 +363,7 @@ public final class ICalAvailable {
     return result;
   }
 
-  /** Dump the options. For debugging. */
+  /** Dumps the options. For debugging. */
   static void printOptions() {
     System.out.println("business_hours: " + business_hours);
     System.out.println("businessHours: " + businessHours);
@@ -484,7 +484,7 @@ public final class ICalAvailable {
   // TODO:  don't propose times that are before the current moment.
 
   /**
-   * Returns a all the times that are available on a single day.
+   * Returns all the times that are available on a single day.
    *
    * @param day the day on which to look for availability
    * @param calendars the calendars that might contain conflicts
@@ -570,7 +570,7 @@ public final class ICalAvailable {
   };
 
   /**
-   * Parses a date when formatted in several common formats.
+   * Parses a date that is in one of several common formats.
    *
    * @param strDate the string to parse as a date
    * @return a Date read from the given string
@@ -597,7 +597,7 @@ public final class ICalAvailable {
   }
 
   /**
-   * Format a date.
+   * Formats a date.
    *
    * @param d the date
    * @param tz the time zone
