@@ -42,7 +42,6 @@ With just C-u prefix argument, prompt for starting date and days."
 		     (append (list "-cp"
 				   (substitute-in-file-name "$HOME/java/plume-lib/icalavailable/build/libs/icalavailable-all.jar")
 				   "-Dical4j.parsing.relaxed=true"
-				   "-Dical4j.parsing.relaxed=true"
 				   "org.plumelib.icalavailable.ICalAvailable")
 			     ical-args)))
       (if (or (= (char-before) 0) (= (char-before) 1) (= (char-before) 255))

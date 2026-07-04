@@ -172,9 +172,9 @@ public final class ICalAvailable {
   @EnsuresNonNull("tz1")
   static void processOptions(String[] args) {
     Options options = new Options("ICalAvailable [options]", ICalAvailable.class);
-    String[] remaining_args = options.parse(true, args);
-    if (remaining_args.length != 0) {
-      System.err.println("Unrecognized arguments: " + Arrays.toString(remaining_args));
+    String[] remainingArgs = options.parse(true, args);
+    if (remainingArgs.length != 0) {
+      System.err.println("Unrecognized arguments: " + Arrays.toString(remainingArgs));
       System.exit(1);
     }
     if (iCal_URL.isEmpty()) {
@@ -220,9 +220,9 @@ public final class ICalAvailable {
     start_date.setTimeZone(tz1);
     start_date.setMinutes((start_date.getMinutes() / 15) * 15);
 
-    for (String URL : iCal_URL) {
+    for (String iCalUrl : iCal_URL) {
       try {
-        URL url = new URL(URL);
+        URL url = new URL(iCalUrl);
         CalendarBuilder builder = new CalendarBuilder();
         Calendar c;
         try (InputStream urlStream = url.openStream()) {
@@ -233,15 +233,14 @@ public final class ICalAvailable {
               System.out.println();
               System.out.println("It is possible that the calendar has moved.");
               // Debugging: write the URL contents to standard output
-              URL url2 = new URL(URL);
-              try (InputStream url_is = url2.openStream()) {
-                System.out.printf("URL: %s%n", url2);
+              try (InputStream contentStream = url.openStream()) {
+                System.out.printf("URL: %s%n", url);
                 System.out.println("Contents:");
                 byte[] buffer = new byte[1024];
-                int len = url_is.read(buffer);
+                int len = contentStream.read(buffer);
                 while (len != -1) {
                   System.out.write(buffer, 0, len);
-                  len = url_is.read(buffer);
+                  len = contentStream.read(buffer);
                 }
                 System.out.println();
               }
@@ -252,7 +251,7 @@ public final class ICalAvailable {
         calendars.add(c);
       } catch (Exception e) {
         e.printStackTrace(System.err);
-        System.err.println("Could not read calendar from " + URL);
+        System.err.println("Could not read calendar from " + iCalUrl);
         System.exit(1);
       }
     }
@@ -584,10 +583,10 @@ public final class ICalAvailable {
       int year = new Date().getYear() + 1900;
       strDate = strDate + "/" + year;
     }
-    for (DateFormat this_df : dateFormats) {
-      this_df.setLenient(false);
+    for (DateFormat dateFormat : dateFormats) {
+      dateFormat.setLenient(false);
       try {
-        java.util.Date result = this_df.parse(strDate);
+        java.util.Date result = dateFormat.parse(strDate);
         return result;
       } catch (ParseException e) {
         // Try the next format in the list.
