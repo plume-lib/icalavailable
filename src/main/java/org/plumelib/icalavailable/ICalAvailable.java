@@ -54,7 +54,7 @@ import org.plumelib.options.Options;
  *   <li id="option:date"><b>--date=</b><i>string</i>. First date to summarize. [default: today]
  *   <li id="option:days"><b>--days=</b><i>int</i>. Number of calendar days to summarize. [default:
  *       8]
- *   <li id="option:iCal-URL"><b>--iCal-URL=</b><i>url</i> {@code [+]}. For a Google calendar: go to
+ *   <li id="option:iCal-URL"><b>--iCal-URL=</b><i>url</i> {@code [+]}. For a Google Calendar: go to
  *       settings, then click on the green "ICAL" icon for the "private address".
  *   <li id="option:business-hours"><b>--business-hours=</b><i>string</i>. A list of time ranges,
  *       expressed as a String. Example: 9am-5pm,7:30pm-9:30pm [default: 9am-5pm]
@@ -70,7 +70,7 @@ import org.plumelib.options.Options;
  * {@code [+]} means option can be specified multiple times
  * <!-- end options doc -->
  * If you are perplexed because of odd results, maybe it is because of the transparency of your iCal
- * items (this shows up as "available/busy" in Google calendar).
+ * items (this shows up as "available/busy" in Google Calendar).
  */
 @SuppressWarnings("PMD") // todo
 public final class ICalAvailable {
@@ -94,7 +94,7 @@ public final class ICalAvailable {
   public static int days = 8;
 
   /**
-   * For a Google calendar: go to settings, then click on the green "ICAL" icon for the "private
+   * For a Google Calendar: go to settings, then click on the green "ICAL" icon for the "private
    * address".
    */
   @Option("<url> schedule in iCal format")
