@@ -143,6 +143,9 @@ public final class ICalAvailable {
 
   // Other variables
 
+  /** The number of milliseconds in one day. */
+  static final long MILLIS_PER_DAY = 1000L * 60 * 60 * 24;
+
   /** If true, enable debugging output. */
   @Option("enable debugging output")
   public static boolean debug = false;
@@ -305,7 +308,9 @@ public final class ICalAvailable {
    * @return either the argument, or its canonical name if possible
    */
   static String canonicalizeTimezone(String timezone) {
-    return canonicalTimezones.getOrDefault(timezone.toLowerCase(Locale.getDefault()), timezone);
+    // Use Locale.ROOT, not the default locale, so that the lookup keys (which are ASCII) match
+    // regardless of the user's locale; e.g., in a Turkish locale "IST".toLowerCase() is "ıst".
+    return canonicalTimezones.getOrDefault(timezone.toLowerCase(Locale.ROOT), timezone);
   }
 
   /**
@@ -388,10 +393,13 @@ public final class ICalAvailable {
     }
 
     List<Period> available = new ArrayList<>();
+    DateTime day = start_date;
     for (int i = 0; i < days; i++) {
-      available.addAll(oneDayAvailable(start_date, calendars));
-      start_date = new DateTime(start_date.getTime() + 1000 * 60 * 60 * 24);
-      start_date.setTimeZone(tz1);
+      available.addAll(oneDayAvailable(day, calendars));
+      // Advancing by exactly 24 hours can land on the wrong wall-clock time across a
+      // daylight-saving-time transition, but that does not affect the day being summarized.
+      day = new DateTime(day.getTime() + MILLIS_PER_DAY);
+      day.setTimeZone(tz1);
     }
 
     if (tz2 != null) {
