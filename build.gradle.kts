@@ -1,3 +1,6 @@
+import net.ltgt.gradle.errorprone.errorprone
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+
 plugins {
   id("java")
   id("application")
@@ -36,7 +39,7 @@ repositories {
   }
   mavenCentral()
   maven {
-    url = "https://central.sonatype.com/repository/maven-snapshots/"
+    url = uri("https://central.sonatype.com/repository/maven-snapshots/")
     mavenContent {
       snapshotsOnly()
     }
@@ -56,18 +59,12 @@ dependencies {
 }
 
 // RequireJavadoc calls javac internals, which the jdk.compiler module does not export.
-def javacInternalPackages = [
-  "file",
-  "parser",
-  "tree",
-  "util"
-]
-def javacExportTargets = javacInternalPackages.collect {
-  "jdk.compiler/com.sun.tools.javac.${it}=ALL-UNNAMED".toString()
+val javacInternalPackages = listOf("file", "parser", "tree", "util")
+val javacExportTargets = javacInternalPackages.map {
+  "jdk.compiler/com.sun.tools.javac.$it=ALL-UNNAMED"
 }
-def addExportsArgs = javacExportTargets.collect { "--add-exports=${it}".toString() }
-def addOpensArgs = javacExportTargets.collect { "--add-opens=${it}".toString() }
-
+val addExportsArgs = javacExportTargets.map { "--add-exports=$it" }
+val addOpensArgs = javacExportTargets.map { "--add-opens=$it" }
 
 // Packaging
 
@@ -81,17 +78,11 @@ application {
 // writing about 8 MB of archives on every build is wasted work.
 // Disabling a task does not skip its dependencies, so "startScripts" and
 // "startShadowScripts" still run; "installDist" and "installShadowDist" need them.
-[
-  "distTar",
-  "distZip",
-  "shadowDistTar",
-  "shadowDistZip"
-].each { taskName ->
+for (taskName in listOf("distTar", "distZip", "shadowDistTar", "shadowDistZip")) {
   tasks.named(taskName) {
     enabled = false
   }
 }
-
 
 // Compilation
 
@@ -103,18 +94,17 @@ java {
   }
 }
 
-tasks.withType(JavaCompile).configureEach {
+tasks.withType<JavaCompile>().configureEach {
   options.release = 17
 
   // Gradle compiles in a worker process whenever the toolchain above differs
   // from the JVM that runs Gradle.  That worker does not inherit the
   // `org.gradle.jvmargs` heap setting in gradle.properties, so set it here too.
-  options.forkOptions.jvmArgs += "-Xmx6g"
-  options.compilerArgs += "-Werror"
+  options.forkOptions.jvmArgs = options.forkOptions.jvmArgs.orEmpty() + "-Xmx6g"
+  options.compilerArgs.add("-Werror")
   // "-processing" avoids javac warning "No processor claimed any of these annotations".
-  options.compilerArgs += "-Xlint:all,-processing"
+  options.compilerArgs.add("-Xlint:all,-processing")
 }
-
 
 // Testing
 
@@ -126,18 +116,20 @@ tasks.withType(JavaCompile).configureEach {
 // `-PtestJavaVersion`.
 // Override with, for example:
 //   ./gradlew test -PtestJavaVersion=17
-def testJavaVersionProperty = project.findProperty("testJavaVersion")
-// Compare to null rather than writing `?:`, which would also treat the empty string as absent.
-if (testJavaVersionProperty != null && testJavaVersionProperty.toString().isEmpty()) {
-  throw new GradleException("-PtestJavaVersion needs a value, as in `-PtestJavaVersion=25`."
-  + "  Omit the property entirely to test under the JVM that Gradle is running under.")
-}
-def testJavaVersion = JavaLanguageVersion.of(
-    (testJavaVersionProperty != null
-    ? testJavaVersionProperty
-    : JavaVersion.current().majorVersion).toString())
+val testJavaVersionProperty = project.findProperty("testJavaVersion")
 
-tasks.withType(Test).configureEach {
+if (testJavaVersionProperty != null && testJavaVersionProperty.toString().isEmpty()) {
+  throw GradleException(
+    "-PtestJavaVersion needs a value, as in `-PtestJavaVersion=25`." +
+      "  Omit the property entirely to test under the JVM that Gradle is running under."
+  )
+}
+
+// Kotlin's `?:` tests only for null, so the empty string rejected above cannot slip through here.
+val testJavaVersion =
+  JavaLanguageVersion.of((testJavaVersionProperty ?: JavaVersion.current().majorVersion).toString())
+
+tasks.withType<Test>().configureEach {
   javaLauncher = javaToolchains.launcherFor {
     languageVersion = testJavaVersion
   }
@@ -159,7 +151,7 @@ tasks.withType(Test).configureEach {
     // `showStandardStreams = true` would be a redundant way to say the same
     // thing as including the "standardOut" and "standardError" events here.
     events("passed", "skipped", "failed", "standardOut", "standardError")
-    exceptionFormat = "full"
+    exceptionFormat = TestExceptionFormat.FULL
   }
 
   // Generate the coverage report after the tests run.
@@ -170,7 +162,7 @@ jacoco {
   toolVersion = libs.versions.jacoco.get()
 }
 
-tasks.named("jacocoTestReport") {
+tasks.named<JacocoReport>("jacocoTestReport") {
   reports {
     xml.required = false
     csv.required = true // Output is written to build/reports/jacoco/test/jacocoTestReport.csv
@@ -178,30 +170,18 @@ tasks.named("jacocoTestReport") {
   }
 }
 
-
 // Code formatting
-
-// Solstice, which provisions the Groovy-Eclipse formatter for Spotless, guards its cache with a
-// lock file and never checks whether the process that holds the lock still exists.  A build that is
-// killed while provisioning therefore leaves "metadata/.lock" behind in the cache directory, and
-// every later build then waits for a timeout and fails with "Failed to provision P2 dependencies".
-// Deleting that file is the recovery; the cache directory is "caches/p2-data" within the Gradle
-// user home directory.
 
 spotless {
   java {
     googleJavaFormat(libs.versions.google.java.format.get())
     formatAnnotations()
   }
-  groovyGradle {
-    target("**/*.gradle")
+  kotlinGradle {
+    target("**/*.gradle.kts")
 
-    def greclipseConfig = greclipse(libs.versions.greclipse.get())
-    greclipseConfig.withP2Mirrors([
-      "https://download.eclipse.org/": "https://mirror.umd.edu/eclipse/",
-      // Not a no-op:  Spotless rewrites every P2 repository through the map if it exists.
-      "https://groovy.jfrog.io/": "https://groovy.jfrog.io/",
-    ])
+    // googleStyle() indents by 2 spaces, as the rest of this project's sources do.
+    ktfmt(libs.versions.ktfmt.get()).googleStyle()
 
     leadingTabsToSpaces(2)
     trimTrailingWhitespace()
@@ -209,64 +189,62 @@ spotless {
   }
 }
 
-
 // Error Prone linter
 
 dependencies {
   errorprone(libs.error.prone.core)
 }
 
-tasks.withType(JavaCompile).configureEach {
+tasks.withType<JavaCompile>().configureEach {
   options.errorprone {
-    disable("AnnotateFormatMethod") // Error Prone doesn't know about Checker Framework @FormatMethod.
+    disable("AnnotateFormatMethod") // Error Prone doesn't know about CF @FormatMethod.
     disable("DoNotCallSuggester") // Suggests use of an Error Prone annotation.
     disable("EffectivelyPrivate") // Loses information about the abstraction.
     disable("ExtendsObject") // Incorrect when using the Checker Framework.
-    disable("InlineMeSuggester") // Using `@InlineMe` requires clients to declare a dependency on error_prone_annotations.
+    disable("InlineMeSuggester") // `@InlineMe` requires a dependency on error_prone_annotations.
     disable("ReferenceEquality") // Use Interning Checker instead.
   }
 }
-
 
 // PMD linter
 
 pmd {
   toolVersion = libs.versions.pmd.get()
-  ruleSets = [] // Prevent the default errorprone.xml from being applied.
-  ruleSetFiles = files("${rootDir}/.pmd-ruleset.xml")
-  consoleOutput = true
+  ruleSets = emptyList() // Prevent the default errorprone.xml from being applied.
+  ruleSetFiles = files("$rootDir/.pmd-ruleset.xml")
+  isConsoleOutput = true
 }
-
 
 // Checker Framework pluggable type-checking
 
 checkerFramework {
   version = libs.versions.checker.framework.get()
-  checkers = [
-    // No need to run CalledMethodsChecker, because ResourceLeakChecker does so.
-    // "org.checkerframework.checker.calledmethods.CalledMethodsChecker",
-    "org.checkerframework.checker.formatter.FormatterChecker",
-    "org.checkerframework.checker.index.IndexChecker",
-    "org.checkerframework.checker.interning.InterningChecker",
-    "org.checkerframework.checker.lock.LockChecker",
-    "org.checkerframework.checker.nullness.NullnessChecker",
-    "org.checkerframework.checker.regex.RegexChecker",
-    "org.checkerframework.checker.resourceleak.ResourceLeakChecker",
-    "org.checkerframework.checker.signature.SignatureChecker",
-    "org.checkerframework.checker.signedness.SignednessChecker",
-    "org.checkerframework.common.initializedfields.InitializedFieldsChecker",
-  ]
-  extraJavacArgs = [
-    "-Werror",
-    // "-Aversion",
-    // "-verbose",
-    "-AcheckPurityAnnotations",
-    "-ArequirePrefixInWarningSuppressions",
-    "-AwarnRedundantAnnotations",
-    "-AwarnUnneededSuppressions",
-  ]
+  checkers =
+    listOf(
+      // No need to run CalledMethodsChecker, because ResourceLeakChecker does so.
+      // "org.checkerframework.checker.calledmethods.CalledMethodsChecker",
+      "org.checkerframework.checker.formatter.FormatterChecker",
+      "org.checkerframework.checker.index.IndexChecker",
+      "org.checkerframework.checker.interning.InterningChecker",
+      "org.checkerframework.checker.lock.LockChecker",
+      "org.checkerframework.checker.nullness.NullnessChecker",
+      "org.checkerframework.checker.regex.RegexChecker",
+      "org.checkerframework.checker.resourceleak.ResourceLeakChecker",
+      "org.checkerframework.checker.signature.SignatureChecker",
+      "org.checkerframework.checker.signedness.SignednessChecker",
+      "org.checkerframework.common.initializedfields.InitializedFieldsChecker",
+    )
+  extraJavacArgs =
+    listOf(
+      "-Werror",
+      // "-Aversion",
+      // "-verbose",
+      "-AcheckPurityAnnotations",
+      "-ArequirePrefixInWarningSuppressions",
+      "-AwarnRedundantAnnotations",
+      "-AwarnUnneededSuppressions",
+    )
 }
-
 
 // Javadoc
 
@@ -275,99 +253,109 @@ checkerFramework {
 // because the Ant builder is reachable only through the "Project" object, which
 // the configuration cache forbids a task action from using.
 //
-// This is a static method of a class rather than a method of the build script,
-// because the configuration cache nulls out a closure's owner when it serializes
-// the closure.
-class JavadocFonts {
-  static void removeDejaVuFontImport(File javadocDir) {
-    if (!javadocDir.isDirectory()) {
+// This is a method of an object declaration rather than a top-level function of the build script,
+// because a top-level function is compiled as a method of the script class, so calling it from a
+// task action would make the task action capture the script.
+object JavadocFonts {
+  private val dejaVuFontImport =
+    Regex("""@import url\('(?:resources/)?fonts/dejavu\.css'\);[ \t]*""")
+
+  fun removeDejaVuFontImport(javadocDir: File) {
+    if (!javadocDir.isDirectory) {
       return
     }
-    javadocDir.eachFileRecurse(groovy.io.FileType.FILES) { file ->
+    javadocDir.walkTopDown().forEach { file ->
       if (!(file.name.endsWith(".css") || file.name.endsWith(".html"))) {
-        return
+        return@forEach
       }
-      String contents = file.getText("UTF-8")
-      String newContents =
-          contents.replaceAll(/@import url\('(?:resources\/)?fonts\/dejavu\.css'\);[ \t]*/, "")
+      val contents = file.readText(Charsets.UTF_8)
+      val newContents = dejaVuFontImport.replace(contents, "")
       if (newContents != contents) {
-        file.setText(newContents, "UTF-8")
+        file.writeText(newContents, Charsets.UTF_8)
       }
     }
   }
 }
 
-tasks.withType(Javadoc).configureEach {
-  options.noTimestamp = true
-  options.quiet()
+tasks.withType<Javadoc>().configureEach {
+  val standardOptions = options as StandardJavadocDocletOptions
+  standardOptions.isNoTimestamp = true
+  standardOptions.quiet()
   doLast {
-    JavadocFonts.removeDejaVuFontImport(it.destinationDir)
+    JavadocFonts.removeDejaVuFontImport((this as Javadoc).destinationDir!!)
   }
 }
 
 // Turns Javadoc warnings into errors.  This is applied to individual tasks rather than to every
 // Javadoc task, because a task that uses a custom doclet rejects the standard doclet's options.
-def strictJavadoc = { Javadoc javadocTask ->
-  javadocTask.options.addBooleanOption("Xdoclint:all", true)
-  javadocTask.options.addBooleanOption("Xwerror", true)
+fun strictJavadoc(javadocTask: Javadoc) {
+  val standardOptions = javadocTask.options as StandardJavadocDocletOptions
+  standardOptions.addBooleanOption("Xdoclint:all", true)
+  standardOptions.addBooleanOption("Xwerror", true)
 }
 
-tasks.named("javadoc", Javadoc) {
-  strictJavadoc(it)
+tasks.named<Javadoc>("javadoc") {
+  strictJavadoc(this)
 }
 
 // The `javadoc` task documents only the public API.
 // `javadocPrivate` applies the same doclint checks to private members.
-def javadocPrivate = tasks.register("javadocPrivate", Javadoc) {
-  group = "documentation"
-  description = "Generate Javadoc for all members, including private ones."
-  source = sourceSets.main.allJava
-  classpath = sourceSets.main.output + sourceSets.main.compileClasspath
-  destinationDir = layout.buildDirectory.dir("docs/javadocPrivate").get().asFile
-  options.addBooleanOption("private", true)
-  strictJavadoc(it)
-}
+val javadocPrivate =
+  tasks.register<Javadoc>("javadocPrivate") {
+    group = "documentation"
+    description = "Generate Javadoc for all members, including private ones."
+    source = sourceSets.main.get().allJava
+    classpath = sourceSets.main.get().output + sourceSets.main.get().compileClasspath
+    destinationDir = layout.buildDirectory.dir("docs/javadocPrivate").get().asFile
+    (options as StandardJavadocDocletOptions).addBooleanOption("private", true)
+    strictJavadoc(this)
+  }
+
 tasks.named("check") {
   dependsOn("javadoc", javadocPrivate)
 }
 
-def javadocWebUpload = tasks.register("javadocWebUpload", Javadoc) {
-  description = "Write API documentation to the website directory."
-  source = sourceSets.main.allJava
-  classpath = sourceSets.main.output + sourceSets.main.compileClasspath
-  destinationDir = file("/cse/web/research/plumelib/${project.name}/api")
-  strictJavadoc(it)
-}
+val javadocWebUpload =
+  tasks.register<Javadoc>("javadocWebUpload") {
+    description = "Write API documentation to the website directory."
+    source = sourceSets.main.get().allJava
+    classpath = sourceSets.main.get().output + sourceSets.main.get().compileClasspath
+    destinationDir = file("/cse/web/research/plumelib/${project.name}/api")
+    strictJavadoc(this)
+  }
 // Set permissions
-def javadocWebChgrp = tasks.register("javadocWebChgrp", Exec) {
-  description = "Set the Unix group of the website's API documentation."
-  mustRunAfter(javadocWebUpload)
-  commandLine("chgrp", "-R", "plse_www", "/cse/web/research/plumelib/${project.name}/api")
-  // A file that another user owns cannot be chgrped, which is not worth failing the build over.
-  ignoreExitValue = true
-  doLast {
-    int exitValue = executionResult.get().exitValue
-    if (exitValue != 0) {
-      logger.warn("chgrp of the uploaded API documentation exited with status ${exitValue}.")
+val javadocWebChgrp =
+  tasks.register<Exec>("javadocWebChgrp") {
+    description = "Set the Unix group of the website's API documentation."
+    mustRunAfter(javadocWebUpload)
+    commandLine("chgrp", "-R", "plse_www", "/cse/web/research/plumelib/${project.name}/api")
+    // A file that another user owns cannot be chgrped, which is not worth failing the build over.
+    isIgnoreExitValue = true
+    doLast {
+      val exitValue = executionResult.get().exitValue
+      if (exitValue != 0) {
+        logger.warn("chgrp of the uploaded API documentation exited with status $exitValue.")
+      }
     }
   }
-}
-def javadocWebChmod = tasks.register("javadocWebChmod", Exec) {
-  description = "Set the Unix permissions of the website's API documentation."
-  mustRunAfter(javadocWebUpload)
-  commandLine("chmod", "-R", "g+w", "/cse/web/research/plumelib/${project.name}/api")
-  // A file that another user owns cannot be chmoded, which is not worth failing the build over.
-  ignoreExitValue = true
-  doLast {
-    int exitValue = executionResult.get().exitValue
-    if (exitValue != 0) {
-      logger.warn("chmod of the uploaded API documentation exited with status ${exitValue}.")
+val javadocWebChmod =
+  tasks.register<Exec>("javadocWebChmod") {
+    description = "Set the Unix permissions of the website's API documentation."
+    mustRunAfter(javadocWebUpload)
+    commandLine("chmod", "-R", "g+w", "/cse/web/research/plumelib/${project.name}/api")
+    // A file that another user owns cannot be chmoded, which is not worth failing the build over.
+    isIgnoreExitValue = true
+    doLast {
+      val exitValue = executionResult.get().exitValue
+      if (exitValue != 0) {
+        logger.warn("chmod of the uploaded API documentation exited with status $exitValue.")
+      }
     }
   }
-}
+
 // The three tasks above are steps of "javadocWeb", so they have no group and thus do not appear in
 // the output of `./gradlew tasks`.
-tasks.register("javadocWeb", DefaultTask) {
+tasks.register<DefaultTask>("javadocWeb") {
   group = "documentation"
   description = "Upload API documentation to website."
   dependsOn(javadocWebUpload, javadocWebChgrp, javadocWebChmod)
@@ -375,96 +363,103 @@ tasks.register("javadocWeb", DefaultTask) {
 
 // `resolvable` rather than the `configurations { requireJavadoc }` shorthand, which creates a
 // configuration that is both resolvable and consumable and that Gradle reports as legacy.
-configurations.resolvable("requireJavadoc")
+val requireJavadocConfiguration = configurations.resolvable("requireJavadoc")
+
 dependencies {
-  requireJavadoc(libs.require.javadoc)
+  "requireJavadoc"(libs.require.javadoc)
 }
+
 // RequireJavadoc produces no output of its own, so write a marker file.  Without a declared output,
 // the task could never be up to date and the declared inputs would have no effect.
-def requireJavadocMarker = layout.buildDirectory.file("requireJavadoc/requireJavadoc.txt")
-def requireJavadoc = tasks.register("requireJavadoc", JavaExec) {
-  group = "documentation"
-  description = "Ensures that Javadoc documentation exists."
-  inputs.files(sourceSets.main.allJava)
-  outputs.file(requireJavadocMarker)
-  mainClass = "org.plumelib.javadoc.RequireJavadoc"
-  classpath = configurations.requireJavadoc
-  args(sourceSets.main.allJava.srcDirs.collect { it.absolutePath })
-  jvmArgs += addExportsArgs
-  jvmArgs += addOpensArgs
-  // Runs only if the tool found no problems, so that a failure does not leave behind a marker file
-  // that would mark this task up to date.
-  doLast {
-    File marker = requireJavadocMarker.get().asFile
-    marker.parentFile.mkdirs()
-    marker.text = ""
+val requireJavadocMarker = layout.buildDirectory.file("requireJavadoc/requireJavadoc.txt")
+val requireJavadoc =
+  tasks.register<JavaExec>("requireJavadoc") {
+    group = "documentation"
+    description = "Ensures that Javadoc documentation exists."
+    inputs.files(sourceSets.main.get().allJava)
+    outputs.file(requireJavadocMarker)
+    mainClass = "org.plumelib.javadoc.RequireJavadoc"
+    classpath = files(requireJavadocConfiguration)
+    args(sourceSets.main.get().allJava.srcDirs.map { it.absolutePath })
+    jvmArgs(addExportsArgs)
+    jvmArgs(addOpensArgs)
+    // Runs only if the tool found no problems, so that a failure does not leave behind a
+    // marker file that would mark this task up to date.
+    doLast {
+      val marker = requireJavadocMarker.get().asFile
+      marker.parentFile.mkdirs()
+      marker.writeText("")
+    }
   }
-}
+
 tasks.named("check") {
   dependsOn(requireJavadoc)
 }
+
 // On javadocWebUpload rather than on javadocWeb, so that the check runs *before* the upload.  A
 // dependency of javadocWeb would be unordered with respect to javadocWebUpload.
 javadocWebUpload.configure {
   dependsOn(requireJavadoc)
 }
 
-
 // Documentation of command-line arguments
 
-tasks.register("updateUserOptions", Javadoc) {
+tasks.register<Javadoc>("updateUserOptions") {
   group = "documentation"
   description = "Updates printed documentation of command-line arguments."
   // "docletpath" below reads sourceSets.main.runtimeClasspath, whose project
   // part is built by "classes".  (Depending on "assemble" would also build the
   // jar and the fat jar, neither of which this task reads.)
   dependsOn("classes")
-  source = sourceSets.main.allJava.files.sort()
-  classpath = sourceSets.main.compileClasspath
-  options.memberLevel = JavadocMemberLevel.PRIVATE
-  options.doclet = "org.plumelib.options.OptionsDoclet"
-  options.addStringOption("docfile", "${projectDir}/src/main/java/org/plumelib/icalavailable/ICalAvailable.java")
-  options.addStringOption("format", "javadoc")
+  setSource(sourceSets.main.get().allJava.files.sorted())
+  classpath = sourceSets.main.get().compileClasspath
+  val standardOptions = options as StandardJavadocDocletOptions
+  standardOptions.memberLevel = JavadocMemberLevel.PRIVATE
+  standardOptions.doclet = "org.plumelib.options.OptionsDoclet"
+  standardOptions.addStringOption(
+    "docfile",
+    "$projectDir/src/main/java/org/plumelib/icalavailable/ICalAvailable.java",
+  )
+  standardOptions.addStringOption("format", "javadoc")
   // OptionsDoclet's "-i" means "edit the docfile in place"; it takes no value.
-  options.addBooleanOption("i", true)
-  // Overrides the blanket `noTimestamp = true` in the `withType(Javadoc)` block above.
-  options.noTimestamp(false)
+  standardOptions.addBooleanOption("i", true)
+  // Overrides the blanket `isNoTimestamp = true` in the `withType<Javadoc>` block above.
+  standardOptions.noTimestamp(false)
   title = ""
   // "docletpath" is a List<File>, so setting it resolves the runtime classpath.
   // Do that when the task runs, not while this file is being evaluated, so that
   // merely realizing the task -- as `./gradlew tasks` and an IDE import do --
   // does not resolve dependencies.
-  def mainRuntimeClasspath = sourceSets.main.runtimeClasspath
+  val mainRuntimeClasspath = sourceSets.main.get().runtimeClasspath
   doFirst {
-    options.docletpath = mainRuntimeClasspath.files as List
+    options.docletpath = mainRuntimeClasspath.files.toList()
   }
 }
-
 
 // Emacs support
 
 /* Make Emacs TAGS table */
-tasks.register("tags", Exec) {
+tasks.register<Exec>("tags") {
   group = "IDE"
   description = "Run etags to create an Emacs TAGS table"
-  def sourceFiles = fileTree("src") {
-    include("**/*.java")
-    include("**/*.sh")
-  }
+  val sourceFiles =
+    fileTree("src") {
+      include("**/*.java")
+      include("**/*.sh")
+    }
   // `projectPath` in a build script is Gradle's project path (such as ":"), not a file system
   // path, so compute the project directory explicitly.
-  def projectDirPath = layout.projectDirectory.asFile.toPath()
+  val projectDirPath = layout.projectDirectory.asFile.toPath()
   inputs.files(sourceFiles)
   outputs.file(layout.projectDirectory.file("TAGS"))
   executable("etags")
   // Compute the arguments when the task runs, not when it is configured.
-  argumentProviders.add({
-    sourceFiles.files.sort()*.toPath().collect {
-      projectDirPath.relativize(it).toString()
+  argumentProviders.add(
+    CommandLineArgumentProvider {
+      sourceFiles.files.sorted().map { projectDirPath.relativize(it.toPath()).toString() }
     }
-  } as CommandLineArgumentProvider)
+  )
 }
-
 
 // Debugging support
 
@@ -474,8 +469,8 @@ tasks.register("printCompileClasspaths") {
   // Look up the classpaths when the task is configured, and resolve them (`asPath`) when it runs.
   // Reading `sourceSets` from a task action would capture the `Project` object, which the
   // configuration cache forbids.
-  def mainClasspath = sourceSets.main.compileClasspath
-  def testClasspath = sourceSets.test.compileClasspath
+  val mainClasspath = sourceSets.main.get().compileClasspath
+  val testClasspath = sourceSets.test.get().compileClasspath
   doFirst {
     println("Compile classpath:")
     println(mainClasspath.asPath)
