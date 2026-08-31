@@ -80,7 +80,7 @@ public final class ICalAvailable {
 
   /** This class is a collection of methods; it does not represent anything. */
   private ICalAvailable() {
-    throw new Error("do not instantiate");
+    throw new UnsupportedOperationException("do not instantiate");
   }
 
   // User options
