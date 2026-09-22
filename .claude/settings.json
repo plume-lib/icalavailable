@@ -37,7 +37,6 @@
       "Bash(git stash list:*)",
       "Bash(git stash:*)",
       "Bash(git status:*)",
-      "Bash(git switch:*)",
       "Bash(git tag:*)",
       "Bash(go test:*)",
       "Bash(grep:*)",
@@ -84,8 +83,14 @@
       "WebSearch(*)",
       "Write(*)"
     ],
-    "deny": [],
+    "deny": ["Bash(git switch)", "Bash(git switch:*)"],
     "ask": []
+  },
+  "agentPushNotifEnabled": true,
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
   },
   "enabledPlugins": {
     "clangd-lsp@claude-plugins-official": true,
@@ -99,6 +104,7 @@
     "rust-analyzer-lsp@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true
   },
+  "inputNeededNotifEnabled": true,
   "skipDangerousModePermissionPrompt": true,
   "spinnerVerbs": {
     "mode": "replace",
