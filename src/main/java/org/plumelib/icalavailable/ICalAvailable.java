@@ -29,6 +29,8 @@ import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.model.component.VFreeBusy;
 import net.fortuna.ical4j.model.parameter.FbType;
 import net.fortuna.ical4j.model.property.FreeBusy;
+import org.checkerframework.checker.modifiability.qual.IteratorPolyMod;
+import org.checkerframework.checker.modifiability.qual.Modifiable;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -108,7 +110,7 @@ public final class ICalAvailable {
   public static String business_hours = "9am-5pm";
 
   /** The business hours, outside of which all times are unavailable. */
-  static List<Period> businessHours = new ArrayList<>();
+  static @Modifiable @IteratorPolyMod List<Period> businessHours = new ArrayList<>();
 
   /** The business days, outside of which all times are unavailable. */
   static List<Integer> businessDays = List.of(1, 2, 3, 4, 5);
@@ -154,7 +156,7 @@ public final class ICalAvailable {
   public static boolean debug = false;
 
   /** The appointments (the times that are unavailable for a meeting). */
-  static List<Calendar> calendars = new ArrayList<>();
+  static @Modifiable @IteratorPolyMod List<Calendar> calendars = new ArrayList<>();
 
   /** The time format. */
   static DateFormat tf = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.US);
