@@ -1,2 +1,3 @@
 BUG: --date=11/16/20 should be November 16, 2020 (format MM/dd/yy), but the program parses
 it with format MM/dd/yyyy as the year 20, so the output is for the year 20 AD.
+See https://github.com/plume-lib/icalavailable/issues/561.

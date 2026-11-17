@@ -1,3 +1,4 @@
 BUG: when the URL yields an HTML page rather than a calendar, the program is supposed to
 print "It is possible that the calendar has moved." and the page's contents, but it does
 not, because it compares against an ical4j error message whose spacing differs.
+See https://github.com/plume-lib/icalavailable/issues/567.

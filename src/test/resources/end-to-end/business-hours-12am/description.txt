@@ -1,2 +1,3 @@
 BUG: --business-hours=12am-9am should mean midnight to 9am, but the program treats 12am as
 noon and crashes with an uncaught exception.
+See https://github.com/plume-lib/icalavailable/issues/559.

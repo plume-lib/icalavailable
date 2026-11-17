@@ -1,3 +1,4 @@
 BUG: with --timezone1=America/New_York in a Pacific environment, business hours (9am-5pm)
 should be Eastern, but the program interprets them in the environment's time zone and prints
 them in Eastern time, as 12:00pm-8:00pm.
+See https://github.com/plume-lib/icalavailable/issues/562.

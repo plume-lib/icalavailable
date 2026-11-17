@@ -1,3 +1,4 @@
 BUG: an all-day event on Tuesday should make all of Tuesday busy, but the program treats the
 day as running from midnight to midnight UTC, so the event makes Monday 4pm-5pm and Tuesday
 9am-4pm Pacific busy.
+See https://github.com/plume-lib/icalavailable/issues/564.

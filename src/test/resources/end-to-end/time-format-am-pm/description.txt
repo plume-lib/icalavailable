@@ -2,3 +2,4 @@ BUG: README.md shows times such as "8:30am", and the program intends to print ti
 (it replaces " AM" by "am" and " PM" by "pm").  But under JDK 20 and later, the time formatter
 puts U+202F NARROW NO-BREAK SPACE, not an ordinary space, before "AM" and "PM", so the program
 prints times such as "8:30<U+202F>AM".  The goal files of every test case record this behavior.
+See https://github.com/plume-lib/icalavailable/issues/558.
