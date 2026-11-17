@@ -48,3 +48,13 @@ function](https://github.com/plume-lib/icalavailable/blob/master/src/main/elisp/
 which inserts the output of this program.
 
 See [API documentation](http://plumelib.org/icalavailable/api/org/plumelib/icalavailable/ICalAvailable.html).
+
+## Tests
+
+The end-to-end tests are data files in
+[`src/test/resources/end-to-end/`](src/test/resources/end-to-end/),
+one directory per test case, so that they can also test an implementation
+written in another language.  Run them with `./gradlew test`.  The file
+[`src/test/resources/end-to-end/README.txt`](src/test/resources/end-to-end/README.txt)
+describes the format, the environment (time zone and locale) in which the
+program runs, and how to run the tests against a different implementation.

@@ -1,6 +1,7 @@
 package org.plumelib.icalavailable;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -49,10 +50,10 @@ import org.junit.jupiter.params.provider.MethodSource;
  *
  * <pre>{@code ./gradlew test -Pe2e.command="python3 /path/to/icalavailable.py"}</pre>
  */
-public final class ICalAvailableEndToEndTest {
+final class ICalAvailableEndToEndTest {
 
   /** Creates a new ICalAvailableEndToEndTest. */
-  public ICalAvailableEndToEndTest() {}
+  ICalAvailableEndToEndTest() {}
 
   /** The classpath resource that contains one subdirectory per test case. */
   private static final String testDataResource = "/end-to-end";
@@ -141,7 +142,7 @@ public final class ICalAvailableEndToEndTest {
       }
     }
     result.sort(Comparator.naturalOrder());
-    assertTrue(!result.isEmpty(), "No test cases in " + testDataDir);
+    assertFalse(result.isEmpty(), "No test cases in " + testDataDir);
     return result;
   }
 
@@ -158,7 +159,7 @@ public final class ICalAvailableEndToEndTest {
    */
   @ParameterizedTest(name = "{0}")
   @MethodSource("testCaseNames")
-  public void endToEnd(String caseName, @TempDir Path workingDir, @TempDir Path captureDir)
+  void endToEnd(String caseName, @TempDir Path workingDir, @TempDir Path captureDir)
       throws Exception {
     Path caseDir = testDataDir.resolve(caseName);
     checkCaseDir(caseDir);

@@ -11,7 +11,7 @@ the test case.  To add a test case, add a subdirectory; no harness code needs to
 Files of a test case
 ====================
 
-A test case directory may contain the following, all of them optional:
+A test case directory contains some of the following files and directories, all of them optional:
 
   description.txt      What the test case checks.  The test harness ignores this file.  A
                        description that starts with "BUG:" describes a way in which the program
@@ -42,7 +42,8 @@ A test case directory may contain the following, all of them optional:
   goal-err-suffix.txt  What the program's standard error should end with.
                        A test case uses one or both of these files, instead of goal-err.txt, when
                        the rest of standard error is a stack trace or other detail that is specific
-                       to one implementation.
+                       to one implementation.  A test case that has goal-err.txt has neither
+                       of these files.
 
   goal-status.txt      The program's exit status, as a decimal integer.  If this file is absent,
                        the exit status should be 0.
