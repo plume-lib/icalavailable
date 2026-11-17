@@ -1,0 +1,2 @@
+BUG: a time range whose end precedes its start should yield a "Bad time range" message,
+but the program crashes with an uncaught exception.

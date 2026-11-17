@@ -1,0 +1,2 @@
+A calendar with CRLF line endings (as RFC 5545 requires) and a folded (continued) line, as
+calendar services produce.  The event is Tuesday 1:00pm-2:15pm Pacific.

@@ -1,0 +1,2 @@
+An option that requires a value but has none is an error; the program prints a usage message
+(to standard output).

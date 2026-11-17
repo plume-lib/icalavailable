@@ -1,0 +1,2 @@
+--timezone2 with alias "arizona" (America/Phoenix), which is printed as "Mountain Standard
+Time", not abbreviated.

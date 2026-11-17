@@ -1,0 +1,3 @@
+BUG: the 5 days starting Friday, October 30, 2020 include Monday, November 2 and Tuesday,
+November 3, but after the end of daylight saving time (November 1) the program loses a day,
+so it omits Tuesday.  The daily 10am event stays at 10am local time.

@@ -1,0 +1,13 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//icalavailable tests//EN
+BEGIN:VEVENT
+UID:folded@example.com
+DTSTAMP:20200101T000000Z
+DTSTART:20201117T210000Z
+DTEND:20201117T221500Z
+SUMMARY:Meeting
+DESCRIPTION:This description is long enough that the calendar service fol
+ ded it onto a continuation line, which starts with a space.
+END:VEVENT
+END:VCALENDAR

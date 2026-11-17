@@ -1,0 +1,2 @@
+A calendar with no events.  Each weekday is wholly available; Saturday and Sunday are
+omitted because they are not business days.

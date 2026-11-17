@@ -1,0 +1,5 @@
+Timezone: Eastern  [Timezone: Pacific]
+
+Tue Nov 17, 2020:
+9:00 AM to 1:00 PM  [6:00 AM to 10:00 AM]
+2:30 PM to 5:00 PM  [11:30 AM to 2:00 PM]

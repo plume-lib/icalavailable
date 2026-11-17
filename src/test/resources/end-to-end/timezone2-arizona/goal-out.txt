@@ -1,0 +1,5 @@
+Timezone: Pacific  [Timezone: Mountain Standard Time]
+
+Tue Nov 17, 2020:
+9:00 AM to 10:00 AM [10:00 AM to 11:00 AM]
+11:30 AM to 5:00 PM [12:30 PM to 6:00 PM]

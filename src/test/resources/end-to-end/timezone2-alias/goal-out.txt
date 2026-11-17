@@ -1,0 +1,8 @@
+Timezone: Pacific  [Timezone: Eastern]
+
+Mon Nov 16, 2020:
+9:00 AM to 5:00 PM  [12:00 PM to 8:00 PM]
+
+Tue Nov 17, 2020:
+9:00 AM to 10:00 AM [12:00 PM to 1:00 PM]
+11:30 AM to 5:00 PM [2:30 PM to 8:00 PM]

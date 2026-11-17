@@ -129,6 +129,11 @@ if (testJavaVersionProperty != null && testJavaVersionProperty.toString().isEmpt
 val testJavaVersion =
   JavaLanguageVersion.of((testJavaVersionProperty ?: JavaVersion.current().majorVersion).toString())
 
+// To run the end-to-end tests against another implementation of the program, name its command, as
+// in:  ./gradlew test -Pe2e.command="python3 /path/to/icalavailable.py"
+// See src/test/resources/end-to-end/README.txt.
+val e2eCommand = project.findProperty("e2e.command")
+
 tasks.withType<Test>().configureEach {
   javaLauncher = javaToolchains.launcherFor {
     languageVersion = testJavaVersion
@@ -137,6 +142,10 @@ tasks.withType<Test>().configureEach {
   useJUnitPlatform {
     includeEngines("junit-jupiter")
     excludeEngines("junit-vintage")
+  }
+
+  if (e2eCommand != null) {
+    systemProperty("e2e.command", e2eCommand.toString())
   }
 
   // Always re-run the tests, so that their output always appears.  Both lines

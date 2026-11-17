@@ -1,0 +1,2 @@
+BUG: an event with STATUS:CANCELLED (Tuesday 10am-11am) should not make its time busy, but
+the program treats it as busy.

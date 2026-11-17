@@ -1,0 +1,2 @@
+--timezone1 with an alias ("EST") that matches the environment's time zone, and --timezone2
+"pacific".

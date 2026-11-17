@@ -1,0 +1,3 @@
+Events that extend past the start or end of business hours, overlapping events, adjacent
+events, events at the very start and end of business hours, and an event that covers a
+whole day (Tuesday, which is then omitted from the output).

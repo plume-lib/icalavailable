@@ -1,0 +1,1 @@
+A --business-hours time that is not a number is an error.

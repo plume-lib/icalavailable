@@ -1,0 +1,2 @@
+--timezone2 with alias "india" (Asia/Calcutta), whose offset from UTC is not a whole number
+of hours, and whose times wrap past midnight.

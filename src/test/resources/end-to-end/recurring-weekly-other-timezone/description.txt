@@ -1,0 +1,2 @@
+A weekly recurring event on Tuesdays and Thursdays, 3:00pm-4:30pm in America/New_York
+(without a VTIMEZONE), is busy 12:00pm-1:30pm Pacific.

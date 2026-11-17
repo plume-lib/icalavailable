@@ -22,19 +22,13 @@ commit the deletion.
 
 ## Checklist
 
-- [ ] Experiment with the program (TZ, locale, file: URLs, stderr logging noise)
-- [ ] Write harness `src/test/java/org/plumelib/icalavailable/ICalAvailableEndToEndTest.java`
-      (subprocess, cwd = temp dir, env TZ/LC_ALL, optional env.txt, `-Pe2e.command`)
-- [ ] Wire `-Pe2e.command` system property in build.gradle.kts
-- [ ] Write `src/test/resources/end-to-end/README.txt`
-- [ ] Test cases: basic busy event, no events, multiple days/weekend skipping,
-      --days, --business-hours (multiple ranges, bad ranges, bad time),
-      --timezone1, --timezone2 (aliases, printed names), unknown time zone,
-      multiple calendars, recurring events (RRULE, EXDATE), all-day events,
-      transparent events, overlapping events, events spanning business-hour
-      boundaries, DST transition, date formats (yyyy/MM/dd, MM/dd/yyyy,
-      MM/dd/yy), bad date, missing year, missing --iCal-URL, unrecognized
-      args, unknown option, missing file, malformed file, --debug?
+Done so far: harness `ICalAvailableEndToEndTest.java`, `-Pe2e.command` in
+build.gradle.kts, test-data README.txt, 59 test cases (all pass under
+`./gradlew test`).  Generator scripts lived in the scratchpad and are not
+needed; to regenerate a goal file, run the program as README.txt describes.
+
 - [ ] Mention the tests in README.md
-- [ ] Run `./gradlew spotlessApply build`; markdownlint-cli2 on Markdown
-- [ ] Final report; delete AGENTS-TODO.md
+- [ ] Run `./gradlew spotlessApply build` (full build, including pmdTest,
+      javadoc, Checker Framework); fix any problems
+- [ ] markdownlint-cli2 on Markdown files
+- [ ] Final report; delete AGENTS-TODO.md and commit the deletion

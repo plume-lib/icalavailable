@@ -1,0 +1,2 @@
+A --date with only one "/" that is not a valid month and day is an error, and the message
+suggests that the year is missing.

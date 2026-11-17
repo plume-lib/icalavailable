@@ -1,0 +1,1 @@
+Without --iCal-URL, the program reports that it is required.

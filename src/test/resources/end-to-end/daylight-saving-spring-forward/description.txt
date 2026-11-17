@@ -1,0 +1,2 @@
+A date range across the start of daylight saving time (March 8, 2020).  The daily 10am event
+stays at 10am local time.

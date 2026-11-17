@@ -1,0 +1,2 @@
+--business-hours with times without am/pm (interpreted as 24-hour times) and with
+uppercase AM.

@@ -1,0 +1,2 @@
+Without --timezone1, business hours and output use the time zone of the environment (here
+America/New_York).  The event is 1:00pm-2:30pm Eastern.
