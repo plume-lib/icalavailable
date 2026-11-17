@@ -82,8 +82,7 @@ final class ICalAvailableEndToEndTest {
 
   /**
    * Returns the Java system properties that make this Java implementation behave as the environment
-   * variables TZ and LC_ALL request, even on a platform whose JVM ignores those variables, plus a
-   * property without which the program cannot run at all.
+   * variables TZ and LC_ALL request, even on a platform whose JVM ignores those variables.
    *
    * @param timeZone the value of the TZ environment variable, such as "America/New_York"
    * @return command-line arguments for the JVM that set system properties
@@ -94,10 +93,7 @@ final class ICalAvailableEndToEndTest {
         "-Duser.language=en",
         "-Duser.country=US",
         "-Dstdout.encoding=UTF-8",
-        "-Dstderr.encoding=UTF-8",
-        // Without this property, ical4j looks for a JCache implementation, which is not on the
-        // classpath, and the program crashes when it starts.
-        "-Dnet.fortuna.ical4j.timezone.cache.impl=net.fortuna.ical4j.util.MapTimeZoneCache");
+        "-Dstderr.encoding=UTF-8");
   }
 
   /**
