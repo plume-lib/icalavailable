@@ -1,1 +1,3 @@
 A non-integer --days is an error; the program prints a usage message (to standard output).
+The test does not check the text of the message, which comes from the Java
+implementation's option-parsing library.

@@ -69,6 +69,8 @@ final class ICalAvailableEndToEndTest {
           "args.txt",
           "tz.txt",
           "goal-out.txt",
+          "goal-out-prefix.txt",
+          "goal-out-suffix.txt",
           "goal-err.txt",
           "goal-err-prefix.txt",
           "goal-err-suffix.txt",
@@ -177,11 +179,8 @@ final class ICalAvailableEndToEndTest {
         goalStatus(caseDir),
         status,
         context + "  Wrong exit status.  Standard error:%n%s".formatted(readText(stderrFile)));
-    assertEquals(
-        goalText(caseDir.resolve("goal-out.txt")),
-        normalize(readText(stdoutFile)),
-        context + "  Wrong standard output.");
-    checkStderr(caseDir, normalizeStderr(readText(stderrFile)), context);
+    checkOutput(caseDir, "out", "standard output", normalize(readText(stdoutFile)), context);
+    checkOutput(caseDir, "err", "standard error", normalizeStderr(readText(stderrFile)), context);
     checkWorkingDir(workingDir, context);
   }
 
@@ -209,13 +208,14 @@ final class ICalAvailableEndToEndTest {
         }
       }
     }
-    if (Files.isRegularFile(caseDir.resolve("goal-err.txt"))
-        && (Files.isRegularFile(caseDir.resolve("goal-err-prefix.txt"))
-            || Files.isRegularFile(caseDir.resolve("goal-err-suffix.txt")))) {
-      fail(
-          "Test case "
-              + caseDir.toFile().getName()
-              + " contains goal-err.txt and also goal-err-prefix.txt or goal-err-suffix.txt.");
+    for (String stream : List.of("out", "err")) {
+      if (Files.isRegularFile(caseDir.resolve("goal-" + stream + ".txt"))
+          && (Files.isRegularFile(caseDir.resolve("goal-" + stream + "-prefix.txt"))
+              || Files.isRegularFile(caseDir.resolve("goal-" + stream + "-suffix.txt")))) {
+        fail(
+            "Test case %s contains goal-%s.txt and also goal-%s-prefix.txt or goal-%s-suffix.txt."
+                .formatted(caseDir.toFile().getName(), stream, stream, stream));
+      }
     }
   }
 
@@ -365,38 +365,47 @@ final class ICalAvailableEndToEndTest {
   }
 
   /**
-   * Fails if the program's standard error is not what the test case says it should be. The test
-   * case gives either the whole of the standard error (in {@code goal-err.txt}) or its beginning or
-   * end or both (in {@code goal-err-prefix.txt} and {@code goal-err-suffix.txt}), for output such
-   * as a stack trace that would make a whole-text goal file brittle. If the test case gives none of
-   * these files, the program should write nothing to standard error.
+   * Fails if what the program wrote to standard output or standard error is not what the test case
+   * says it should be. For standard output, the test case gives either the whole text (in {@code
+   * goal-out.txt}) or its beginning or end or both (in {@code goal-out-prefix.txt} and {@code
+   * goal-out-suffix.txt}), for output such as a stack trace that would make a whole-text goal file
+   * brittle. If the test case gives none of these files, the program should write nothing. Likewise
+   * for standard error, with "err" in place of "out" in the file names.
    *
    * @param caseDir a test case directory
-   * @param stderr what the program wrote to standard error, normalized
+   * @param stream "out" or "err", the part of the goal files' names that names the stream
+   * @param streamName "standard output" or "standard error"; used for diagnostics
+   * @param actual what the program wrote to the stream, normalized
    * @param context a description of the test case; used for diagnostics
    * @throws IOException if a goal file cannot be read
    */
-  private static void checkStderr(Path caseDir, String stderr, String context) throws IOException {
-    Path prefixFile = caseDir.resolve("goal-err-prefix.txt");
-    Path suffixFile = caseDir.resolve("goal-err-suffix.txt");
+  private static void checkOutput(
+      Path caseDir, String stream, String streamName, String actual, String context)
+      throws IOException {
+    Path prefixFile = caseDir.resolve("goal-" + stream + "-prefix.txt");
+    Path suffixFile = caseDir.resolve("goal-" + stream + "-suffix.txt");
     if (!Files.isRegularFile(prefixFile) && !Files.isRegularFile(suffixFile)) {
       assertEquals(
-          goalText(caseDir.resolve("goal-err.txt")), stderr, context + "  Wrong standard error.");
+          goalText(caseDir.resolve("goal-" + stream + ".txt")),
+          actual,
+          context + "  Wrong " + streamName + ".");
       return;
     }
     if (Files.isRegularFile(prefixFile)) {
       String prefix = goalText(prefixFile);
       assertTrue(
-          stderr.startsWith(prefix),
+          actual.startsWith(prefix),
           context
-              + "  Standard error should start with:%n%s%nbut was:%n%s".formatted(prefix, stderr));
+              + "  Expected %s to start with:%n%s%nbut was:%n%s"
+                  .formatted(streamName, prefix, actual));
     }
     if (Files.isRegularFile(suffixFile)) {
       String suffix = goalText(suffixFile);
       assertTrue(
-          stderr.endsWith(suffix),
+          actual.endsWith(suffix),
           context
-              + "  Standard error should end with:%n%s%nbut was:%n%s".formatted(suffix, stderr));
+              + "  Expected %s to end with:%n%s%nbut was:%n%s"
+                  .formatted(streamName, suffix, actual));
     }
   }
 

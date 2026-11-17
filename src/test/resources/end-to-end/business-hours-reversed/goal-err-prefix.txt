@@ -1,1 +1,0 @@
-Exception in thread "main" java.lang.IllegalArgumentException: Range start must be before range end

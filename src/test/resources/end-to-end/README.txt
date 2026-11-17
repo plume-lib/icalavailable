@@ -31,8 +31,16 @@ A test case directory contains some of the following files and directories, all 
                        "America/New_York".  If this file is absent, the time zone is
                        "America/Los_Angeles".
 
-  goal-out.txt         What the program should write to standard output.  If this file is absent,
-                       the program should write nothing to standard output.
+  goal-out.txt         What the program should write to standard output.  If none of goal-out.txt,
+                       goal-out-prefix.txt, and goal-out-suffix.txt is present, the program should
+                       write nothing to standard output.
+
+  goal-out-prefix.txt  What the program's standard output should start with.
+  goal-out-suffix.txt  What the program's standard output should end with.
+                       A test case uses one or both of these files, instead of goal-out.txt, when
+                       the rest of standard output is specific to one implementation.  A test case
+                       that has goal-out.txt has neither of these files.  An empty
+                       goal-out-prefix.txt permits any standard output.
 
   goal-err.txt         What the program should write to standard error.  If none of goal-err.txt,
                        goal-err-prefix.txt, and goal-err-suffix.txt is present, the program should
@@ -40,10 +48,9 @@ A test case directory contains some of the following files and directories, all 
 
   goal-err-prefix.txt  What the program's standard error should start with.
   goal-err-suffix.txt  What the program's standard error should end with.
-                       A test case uses one or both of these files, instead of goal-err.txt, when
-                       the rest of standard error is a stack trace or other detail that is specific
-                       to one implementation.  A test case that has goal-err.txt has neither
-                       of these files.
+                       These work like goal-out-prefix.txt and goal-out-suffix.txt, for standard
+                       error; for example, the rest of standard error might be a stack trace.  An
+                       empty goal-err-prefix.txt permits any standard error.
 
   goal-status.txt      The program's exit status, as a decimal integer.  If this file is absent,
                        the exit status should be 0.
@@ -78,9 +85,9 @@ How to run a test case
 
 3. Compare, after normalization (see below):
    * the exit status to goal-status.txt (or 0),
-   * standard output to goal-out.txt (or the empty string),
-   * standard error to goal-err.txt (or the empty string), or check that it starts with
-     goal-err-prefix.txt and ends with goal-err-suffix.txt, whichever of those two files exist.
+   * standard output to goal-out.txt (or the empty string), or check that it starts with
+     goal-out-prefix.txt and ends with goal-out-suffix.txt, whichever of those two files exist,
+   * standard error likewise, using goal-err.txt, goal-err-prefix.txt, and goal-err-suffix.txt.
    The test case fails if any comparison fails.
 
 4. Check that the working directory contains no files other than the ones under input/.  (The
@@ -101,6 +108,34 @@ All files and all output are UTF-8 text.  Before comparing, the harness:
 No other normalization is done; in particular, trailing whitespace and blank lines are significant.
 Note that output times contain U+202F NARROW NO-BREAK SPACE before "AM" and "PM"; see test case
 time-format-am-pm.
+
+
+Implementation-specific output
+==============================
+
+Apart from the bugs that they record, the goal files check only what any implementation should
+produce.  Where the Java implementation's output contains text that comes from Java or from a
+library, the goal files check the rest of the output (the exit status and the program's own
+messages, which name the files involved) but not that text.  Specifically:
+
+ * When the program cannot read a calendar, standard error is a stack trace followed by the
+   program's message, such as "Could not read calendar from file:input/calendar.ics".  The test
+   case checks only that message, with goal-err-suffix.txt.
+
+ * When the command line is malformed, the program writes a message and a usage summary to standard
+   output.  An option-parsing library generates both, so the test case permits any standard output,
+   with an empty goal-out-prefix.txt.  It checks the exit status and that standard error is empty.
+
+ * Some test cases record a bug that makes the program crash with an uncaught exception.  The test
+   case permits any standard error, with an empty goal-err-prefix.txt, and checks the exit status.
+
+One goal file remains specific to the Java implementation:  date-two-digit-year/goal-out.txt.  It
+records a bug that makes the program summarize dates in the year 20 AD, whose days of the week
+Java computes in the Julian calendar.  An implementation that has the same bug but uses the
+proleptic Gregorian calendar would print different days of the week.
+
+The names of time zones in the output, such as "Japan Standard Time", are the English names from
+the Unicode Common Locale Data Repository (CLDR), which Java uses.
 
 
 Running the tests
