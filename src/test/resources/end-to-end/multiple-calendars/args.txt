@@ -1,0 +1,4 @@
+--iCal-URL=file:input/work.ics
+--iCal-URL=file:input/home.ics
+--date=2020/11/17
+--days=2

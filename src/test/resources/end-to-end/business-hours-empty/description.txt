@@ -1,0 +1,1 @@
+An empty --business-hours is an error.

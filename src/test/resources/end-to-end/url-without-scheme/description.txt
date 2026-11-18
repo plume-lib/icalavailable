@@ -1,0 +1,1 @@
+A --iCal-URL that is a file name rather than a URL is an error.

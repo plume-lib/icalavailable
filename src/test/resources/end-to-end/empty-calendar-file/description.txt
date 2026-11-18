@@ -1,0 +1,1 @@
+An empty (zero-byte) calendar file is an error.

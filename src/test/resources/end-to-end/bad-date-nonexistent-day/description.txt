@@ -1,0 +1,1 @@
+A --date that does not exist (February 30) is an error.

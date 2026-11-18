@@ -1,0 +1,4 @@
+BUG: one occurrence of a weekly recurring event is moved (by a VEVENT with RECURRENCE-ID)
+from Thursday 12:00pm-1:30pm Pacific to 3:00pm-4:00pm Pacific.  The original time should be
+available, but the program treats both the original and the new time as busy.
+See https://github.com/plume-lib/icalavailable/issues/566.

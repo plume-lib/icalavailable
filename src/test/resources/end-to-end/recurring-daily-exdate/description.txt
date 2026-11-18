@@ -1,0 +1,2 @@
+A daily recurring event (RRULE with COUNT) in time zone America/Los_Angeles, defined by a
+VTIMEZONE, with one occurrence (Wednesday) removed by EXDATE.

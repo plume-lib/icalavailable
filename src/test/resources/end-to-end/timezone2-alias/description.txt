@@ -1,0 +1,2 @@
+--timezone2 prints each range in a second time zone, in brackets.  "eastern" is an alias
+for America/New_York, and the header uses short names for both time zones.

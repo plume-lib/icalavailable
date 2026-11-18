@@ -1,0 +1,1 @@
+With --days=0, no days are summarized and the output is empty.

@@ -1,0 +1,2 @@
+--timezone2 with an Olson time zone ID that is not an alias.  The header uses the time
+zone's full display name.

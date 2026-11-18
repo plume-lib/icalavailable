@@ -1,0 +1,1 @@
+A --iCal-URL that names a nonexistent file is an error.

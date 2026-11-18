@@ -1,0 +1,3 @@
+--iCal-URL=file:input/calendar.ics
+--iCal-URL=file:input/no-such-file.ics
+--date=2020/11/17

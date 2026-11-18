@@ -1,0 +1,2 @@
+An event whose times have neither a "Z" suffix nor a TZID ("floating" times) is
+interpreted in the local time zone: 1pm-2pm.

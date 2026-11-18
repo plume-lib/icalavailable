@@ -1,0 +1,2 @@
+Without --days, the program summarizes 8 calendar days, starting from --date.  Starting on a
+Tuesday, that is 6 business days.

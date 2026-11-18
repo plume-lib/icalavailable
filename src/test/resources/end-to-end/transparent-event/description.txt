@@ -1,0 +1,2 @@
+An event marked TRANSP:TRANSPARENT (shown as "available" or "free" in calendar programs)
+does not make its time busy, but an opaque event does.

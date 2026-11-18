@@ -1,0 +1,2 @@
+If one of several calendars cannot be read, that is an error, and nothing is printed for
+the calendars that can be read.

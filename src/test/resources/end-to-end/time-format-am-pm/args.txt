@@ -1,0 +1,4 @@
+--iCal-URL=file:input/calendar.ics
+--date=2020/11/17
+--days=1
+--business-hours=8:30am-4:45pm

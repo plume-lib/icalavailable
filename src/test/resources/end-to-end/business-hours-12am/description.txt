@@ -1,0 +1,5 @@
+BUG: --business-hours=12am-9am should mean midnight to 9am, but the program treats 12am as
+noon and crashes with an uncaught exception.
+The test does not check the text of the crash report, which is specific to the Java
+implementation.
+See https://github.com/plume-lib/icalavailable/issues/559.

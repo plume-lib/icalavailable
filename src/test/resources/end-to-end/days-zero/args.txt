@@ -1,0 +1,3 @@
+--iCal-URL=file:input/calendar.ics
+--date=2020/11/17
+--days=0

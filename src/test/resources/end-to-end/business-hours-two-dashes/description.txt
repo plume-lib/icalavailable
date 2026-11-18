@@ -1,0 +1,1 @@
+A --business-hours range with two "-" is an error.
